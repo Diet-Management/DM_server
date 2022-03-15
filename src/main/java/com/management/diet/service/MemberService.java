@@ -6,6 +6,10 @@ import com.management.diet.dto.request.MemberLoginDto;
 import com.management.diet.dto.request.MemberRequestDto;
 import com.management.diet.dto.response.MemberLoginResponseDto;
 import com.management.diet.dto.response.MemberResponseDto;
+import com.management.diet.exception.ErrorCode;
+import com.management.diet.exception.exception.MemberNotExistsException;
+import com.management.diet.exception.exception.MemberNotFindException;
+import com.management.diet.exception.exception.PasswordNotCorrectException;
 import com.management.diet.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,9 +35,9 @@ public class MemberService {
     @Transactional
     public MemberLoginResponseDto login(MemberLoginDto memberLoginDto){
         Member member = memberRepository.findByEmail(memberLoginDto.getEmail())
-                .orElseThrow(() -> new RuntimeException());
-        if(member.getPassword()!=memberLoginDto.getEmail()){
-            throw new RuntimeException();
+                .orElseThrow(() -> new MemberNotExistsException("Member can't find Exception", ErrorCode.MEMBER_NOT_FIND));
+        if(member.getPassword()!=memberLoginDto.getPassword()){
+            throw new PasswordNotCorrectException("Password isn't correct", ErrorCode.PASSWORD_NOT_CORRECT);
         }
         final String accessToken=tokenProvider.generateAccessToken(member.getEmail());
         MemberLoginResponseDto responseDto = MemberLoginResponseDto.builder()
@@ -46,7 +50,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public MemberResponseDto findMemberByIdx(Long memberIdx){
         Member member = memberRepository.findById(memberIdx)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new MemberNotFindException("Member can't find", ErrorCode.MEMBER_NOT_FIND));
         MemberResponseDto memberResponseDto = MemberResponseDto.builder()
                 .name(member.getName())
                 .build();
