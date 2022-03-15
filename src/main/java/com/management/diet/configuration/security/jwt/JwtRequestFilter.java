@@ -42,7 +42,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private String accessTokenExtractEmail(String accessToken){
         try{
             return tokenProvider.getUserEmail(accessToken);
-        }catch(JwtException | SignatureException | IllegalArgumentException e){
+        }catch(JwtException | IllegalArgumentException e){
             throw new RuntimeException();
         }
     }
@@ -59,7 +59,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private String generateNewAccessToken(String refreshToken){
         try{
             return tokenProvider.generateAccessToken(tokenProvider.getUserEmail(refreshToken));
-        }catch (SignatureException | JwtException | IllegalStateException e) {
+        }catch (JwtException | IllegalStateException e) {
             throw new RuntimeException();
         }
     }

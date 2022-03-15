@@ -33,4 +33,10 @@ public class MemberController {
     public SingleResultResponse<MemberResponseDto> findMember(@PathVariable Long memberIdx){
         return responseService.getSingleResult(memberService.findMemberByIdx(memberIdx));
     }
+
+    @DeleteMapping("/member")
+    public CommonResultResponse deleteMember(@RequestHeader String Authorization){
+        memberService.withdrawalMember(Authorization);
+        return responseService.getSuccessResult();
+    }
 }

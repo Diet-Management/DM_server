@@ -36,7 +36,7 @@ public class MemberService {
     public MemberLoginResponseDto login(MemberLoginDto memberLoginDto){
         Member member = memberRepository.findByEmail(memberLoginDto.getEmail())
                 .orElseThrow(() -> new MemberNotExistsException("Member can't find Exception", ErrorCode.MEMBER_NOT_FIND));
-        if(member.getPassword()!=memberLoginDto.getPassword()){
+        if(!passwordEncoder.matches(memberLoginDto.getPassword(), member.getPassword())){
             throw new PasswordNotCorrectException("Password isn't correct", ErrorCode.PASSWORD_NOT_CORRECT);
         }
         final String accessToken=tokenProvider.generateAccessToken(member.getEmail());
@@ -45,6 +45,18 @@ public class MemberService {
                 .accessToken(accessToken)
                 .build();
         return responseDto;
+    }
+
+    @Transactional
+    public void withdrawalMember(String accessToken){
+        String userEmail = getUserEmail(accessToken);
+        Member member = memberRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new MemberNotFindException("Member can't find to accessToken", ErrorCode.MEMBER_NOT_FIND));
+        memberRepository.delete(member);
+    }
+
+    private String getUserEmail(String accessToken){
+        return tokenProvider.getUserEmail(accessToken);
     }
 
     @Transactional(readOnly = true)

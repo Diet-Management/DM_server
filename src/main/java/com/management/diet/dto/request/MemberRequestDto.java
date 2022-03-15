@@ -11,11 +11,13 @@ import javax.validation.constraints.NotBlank;
 @Setter @Getter
 @AllArgsConstructor
 public class MemberRequestDto {
-    @NotBlank @Email
+    @NotBlank(message = "email is not allowed null") @Email
     private String email;
-    @NotBlank
+
+    @NotBlank(message = "name is not allowed null")
     private String name;
-    @NotBlank
+
+    @NotBlank(message = "password is not allowed null")
     private String password;
 
     public Member toEntity(){

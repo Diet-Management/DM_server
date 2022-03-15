@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.security.SignatureException;
+import io.jsonwebtoken.security.SignatureException;
 import java.util.Date;
 
 @Component
@@ -32,20 +32,20 @@ public class TokenProvider {
         byte keyByte[]=secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyByte);
     }
-    public Claims extractAllClaims(String token) throws ExpiredJwtException, IllegalArgumentException, MalformedJwtException, SignatureException, UnsupportedJwtException {
+    public Claims extractAllClaims(String token) throws ExpiredJwtException, IllegalArgumentException, MalformedJwtException, SignatureException,UnsupportedJwtException {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey(secretKey))
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
-    public String getUserEmail(String token) throws  SignatureException{
+    public String getUserEmail(String token){
         return extractAllClaims(token).get(TokenClaimName.USER_EMAIL.value, String.class);
     }
-    public String getTokenType(String token) throws SignatureException {
+    public String getTokenType(String token) {
         return extractAllClaims(token).get(TokenClaimName.TOKEN_TYPE.value, String.class);
     }
-    public Boolean isTokenExpired(String token) throws SignatureException {
+    public Boolean isTokenExpired(String token){
         try{
             extractAllClaims(token).getExpiration();
             return false;
