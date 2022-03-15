@@ -21,6 +21,9 @@ public class Member implements UserDetails {
     @Column(name = "member_id")
     private Long member_idx;
 
+    @Column(name = "email")
+    private String email;
+
     @Column(name="name")
     private String name;
 
