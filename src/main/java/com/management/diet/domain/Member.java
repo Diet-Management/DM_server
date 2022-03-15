@@ -1,14 +1,14 @@
 package com.management.diet.domain;
 
+import com.management.diet.enums.Theme;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
+
+import static javax.persistence.EnumType.STRING;
 
 @Builder
 @Getter
@@ -29,6 +29,10 @@ public class Member implements UserDetails {
 
     @Column(name="password")
     private String password;
+
+    @Column(name="theme")
+    @Enumerated(STRING)
+    private Theme theme;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -41,7 +41,7 @@ public class MemberService {
         }
         final String accessToken=tokenProvider.generateAccessToken(member.getEmail());
         MemberLoginResponseDto responseDto = MemberLoginResponseDto.builder()
-                .email(memberLoginDto.getEmail())
+                .theme(member.getTheme())
                 .accessToken(accessToken)
                 .build();
         return responseDto;

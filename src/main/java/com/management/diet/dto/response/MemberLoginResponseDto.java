@@ -1,5 +1,6 @@
 package com.management.diet.dto.response;
 
+import com.management.diet.enums.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor @NoArgsConstructor
 public class MemberLoginResponseDto {
-    private String email;
+    private Theme theme;
     private String accessToken;
 }
