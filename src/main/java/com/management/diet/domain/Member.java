@@ -1,5 +1,6 @@
 package com.management.diet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.management.diet.enums.Theme;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -21,12 +23,14 @@ public class Member implements UserDetails {
     @Column(name = "member_id")
     private Long member_idx;
 
+    @JsonIgnore
     @Column(name = "email")
     private String email;
 
     @Column(name="name")
     private String name;
 
+    @JsonIgnore
     @Column(name="password")
     private String password;
 
@@ -36,6 +40,10 @@ public class Member implements UserDetails {
 
     @Column(name="profile")
     private String profile;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.REMOVE)
+    private List<Posting> postings;
 
     public void updateProfile(String profile){
         this.profile=profile;

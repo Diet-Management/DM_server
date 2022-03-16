@@ -55,7 +55,7 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
-    private String getUserEmail(String accessToken){
+    protected String getUserEmail(String accessToken){
         return tokenProvider.getUserEmail(accessToken);
     }
 
@@ -71,9 +71,17 @@ public class MemberService {
         Member member = memberRepository.findById(memberIdx)
                 .orElseThrow(() -> new MemberNotFindException("Member can't find", ErrorCode.MEMBER_NOT_FIND));
         MemberResponseDto memberResponseDto = MemberResponseDto.builder()
+                .memberIdx(memberIdx)
                 .name(member.getName())
                 .profile(member.getProfile())
+                .postings(member.getPostings())
                 .build();
         return memberResponseDto;
+    }
+    @Transactional(readOnly = true)
+    public Member findMemberByEmail(String email){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFindException("Member can't find", ErrorCode.MEMBER_NOT_FIND));
+        return member;
     }
 }
