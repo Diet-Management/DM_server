@@ -18,6 +18,7 @@ public class PostingRequestDto {
                 .content(content)
                 .date(date)
                 .member(member)
+                .fix(false)
                 .build();
     }
 }

@@ -1,6 +1,8 @@
 package com.management.diet.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.management.diet.dto.request.MemberRequestDto;
+import com.management.diet.dto.request.PostingRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,9 +27,19 @@ public class Posting {
     private String content;
 
     @Column(name = "date")
-    LocalDate date;
+    private LocalDate date;
+
+    @Column(name = "fix")
+    private Boolean fix;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void update(PostingRequestDto postingRequestDto){
+        this.title=postingRequestDto.getTitle();
+        this.content=postingRequestDto.getContent();
+        this.date=LocalDate.now();
+        this.fix=true;
+    }
 }

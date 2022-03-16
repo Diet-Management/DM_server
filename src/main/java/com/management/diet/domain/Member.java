@@ -42,7 +42,7 @@ public class Member implements UserDetails {
     private String profile;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "member")
     private List<Posting> postings;
 
     public void updateProfile(String profile){

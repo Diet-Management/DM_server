@@ -12,8 +12,10 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor @NoArgsConstructor
 public class PostingResponseDto {
+    private Long postIdx;
     private String title;
     private String content;
-    private Member member;
     private LocalDate date;
+    private Boolean fix;
+    private Member member;
 }

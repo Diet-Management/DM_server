@@ -30,28 +30,62 @@ public class PostingService {
         return posting.getPostingIdx();
     }
 
+    @Transactional
+    public void deletePosting(String accessToken,Long postingIdx){
+        String userEmail = memberService.getUserEmail(accessToken);
+        Member member = memberService.findMemberByEmail(userEmail);
+        Posting posting = getPostingByIdx(postingIdx);
+        Member writer = posting.getMember();
+        if(member != writer){
+            throw new RuntimeException();
+        }
+        postingRepository.delete(posting);
+    }
+
+    @Transactional
+    public void updatePosting(String accessToken,Long postingIdx, PostingRequestDto postingRequestDto){
+        String userEmail = memberService.getUserEmail(accessToken);
+        Member member = memberService.findMemberByEmail(userEmail);
+        Posting posting = getPostingByIdx(postingIdx);
+        Member writer = posting.getMember();
+        if(member != writer){
+            throw new RuntimeException();
+        }
+        posting.update(postingRequestDto);
+    }
+
+    @Transactional(readOnly = true)
+    protected Posting getPostingByIdx(Long postingIdx){
+        return postingRepository.findById(postingIdx)
+                .orElseThrow(()->new RuntimeException());
+    }
+
     @Transactional(readOnly = true)
     public PostingResponseDto getByIdx(Long postingIdx){
         Posting posting = postingRepository.findById(postingIdx)
                 .orElseThrow(() -> new RuntimeException());
         return PostingResponseDto.builder()
+                .postIdx(posting.getPostingIdx())
                 .title(posting.getTitle())
                 .content(posting.getContent())
+                .fix(posting.getFix())
                 .member(posting.getMember())
                 .date(posting.getDate())
                 .build();
     }
 
     @Transactional(readOnly = true)
-    public List<Posting> findAll(){
+    public List<PostingResponseDto> findAll(){
         List<Posting> all = postingRepository.findAll();
         List<PostingResponseDto> response= new ArrayList<>();
-//        all.forEach(i->response.add(PostingResponseDto.builder()
-//                        .title(i.getTitle())
-//                        .date(i.getDate())
-//                        .member(i.getMember())
-//                        .content(i.getContent())
-//                .build()));
-        return all;
+        all.forEach(i->response.add(PostingResponseDto.builder()
+                        .postIdx(i.getPostingIdx())
+                        .title(i.getTitle())
+                        .date(i.getDate())
+                        .member(i.getMember())
+                        .content(i.getContent())
+                        .fix(i.getFix())
+                .build()));
+        return response;
     }
 }

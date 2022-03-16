@@ -31,7 +31,19 @@ public class PostingController {
     }
 
     @GetMapping("/posting")
-    public ListResultResponse<Posting> findAll(){
+    public ListResultResponse<PostingResponseDto> findAll(){
         return responseService.getListResult(postingService.findAll());
+    }
+
+    @DeleteMapping("/posting/{postingIdx}")
+    public CommonResultResponse deletePosting(@RequestHeader String Authorization, @PathVariable Long postingIdx){
+        postingService.deletePosting(Authorization, postingIdx);
+        return responseService.getSuccessResult();
+    }
+
+    @PutMapping("/posting/{postingIdx}")
+    public CommonResultResponse updatePosting(@RequestHeader String Authorization, @PathVariable Long postingIdx, @RequestBody PostingRequestDto postingRequestDto){
+        postingService.updatePosting(Authorization, postingIdx, postingRequestDto);
+        return responseService.getSuccessResult();
     }
 }
