@@ -1,0 +1,12 @@
+package com.management.diet.exception.exception;
+
+import com.management.diet.exception.ErrorCode;
+
+public class WrongPathException extends RuntimeException{
+    private ErrorCode errorCode;
+
+    public WrongPathException(String message, ErrorCode errorCode) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+}

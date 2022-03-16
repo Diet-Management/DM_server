@@ -34,6 +34,13 @@ public class Member implements UserDetails {
     @Enumerated(STRING)
     private Theme theme;
 
+    @Column(name="profile")
+    private String profile;
+
+    public void updateProfile(String profile){
+        this.profile=profile;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

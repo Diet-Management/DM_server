@@ -59,12 +59,20 @@ public class MemberService {
         return tokenProvider.getUserEmail(accessToken);
     }
 
+    @Transactional
+    public void uploadProfile(String fileName,String accessToken){
+        Member member = memberRepository.findByEmail(getUserEmail(accessToken))
+                .orElseThrow(() -> new MemberNotFindException("Member can't find to accessToken", ErrorCode.MEMBER_NOT_FIND));
+        member.updateProfile(fileName);
+    }
+
     @Transactional(readOnly = true)
     public MemberResponseDto findMemberByIdx(Long memberIdx){
         Member member = memberRepository.findById(memberIdx)
                 .orElseThrow(() -> new MemberNotFindException("Member can't find", ErrorCode.MEMBER_NOT_FIND));
         MemberResponseDto memberResponseDto = MemberResponseDto.builder()
                 .name(member.getName())
+                .profile(member.getProfile())
                 .build();
         return memberResponseDto;
     }
