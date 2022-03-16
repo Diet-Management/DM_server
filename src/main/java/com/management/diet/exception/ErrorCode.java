@@ -15,6 +15,7 @@ public enum ErrorCode {
     NOT_COINCIDE_API(400, "This request is not coincide API spec", ErrorClassification.COMMON+"-ERR-400"),
     FILE_NOT_EXISTS(400, "File doesn't exists", ErrorClassification.COMMON+"-ERR-400"),
     WRONG_PATH(400, "Path isn't right", ErrorClassification.COMMON+"-ERR-400"),
+    PROFILE_NOT_EXISTS(404, "Profile Picture can't find", ErrorClassification.COMMON+"-ERR-404");
     ;
 
     private int status;

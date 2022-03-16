@@ -5,6 +5,7 @@ import com.management.diet.exception.ErrorResponse;
 import com.management.diet.exception.exception.MemberNotExistsException;
 import com.management.diet.exception.exception.MemberNotFindException;
 import com.management.diet.exception.exception.PasswordNotCorrectException;
+import com.management.diet.exception.exception.ProfileNotExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +47,13 @@ public class GlobalExceptionHandler {
         printExceptionMessage(request,ex, "Not Coincide API spec");
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.NOT_COINCIDE_API);
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(org.apache.http.HttpStatus.SC_BAD_REQUEST));
+    }
+
+    @ExceptionHandler(ProfileNotExistsException.class)
+    public ResponseEntity<ErrorResponse> ProfileNotExistsExceptionHandler(HttpServletRequest request, HttpServletResponse response, ProfileNotExistsException ex){
+        printExceptionMessage(request, ex,"Profile picture doesn't exists");
+        ErrorResponse errorResponse=new ErrorResponse(ErrorCode.PROFILE_NOT_EXISTS);
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
     }
 
     private void printExceptionMessage(HttpServletRequest request, Exception ex, String message) {

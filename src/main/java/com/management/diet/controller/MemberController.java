@@ -6,6 +6,7 @@ import com.management.diet.dto.response.MemberLoginResponseDto;
 import com.management.diet.dto.response.MemberResponseDto;
 import com.management.diet.exception.ErrorCode;
 import com.management.diet.exception.exception.FileNotExistsException;
+import com.management.diet.exception.exception.ProfileNotExistsException;
 import com.management.diet.exception.exception.WrongPathException;
 import com.management.diet.response.ResponseService;
 import com.management.diet.response.result.CommonResultResponse;
@@ -79,7 +80,7 @@ public class MemberController {
     public ResponseEntity<Resource> viewImg(@PathVariable Long memberIdx) throws IOException{
         String profile = memberService.findMemberByIdx(memberIdx).getProfile();
         if (profile==null){
-            throw new RuntimeException();
+            throw new ProfileNotExistsException("Profile picture doesn't exist", ErrorCode.PROFILE_NOT_EXISTS);
         }
         Path path=new File(profile).toPath();
         FileSystemResource resource = new FileSystemResource(path);
