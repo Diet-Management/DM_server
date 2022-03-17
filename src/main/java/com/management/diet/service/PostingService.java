@@ -3,6 +3,7 @@ package com.management.diet.service;
 import com.management.diet.domain.Member;
 import com.management.diet.domain.Posting;
 import com.management.diet.dto.request.PostingRequestDto;
+import com.management.diet.enums.SortBy;
 import com.management.diet.dto.response.PostingResponseDto;
 import com.management.diet.exception.ErrorCode;
 import com.management.diet.exception.exception.PostingNotFindException;
@@ -75,6 +76,50 @@ public class PostingService {
                 .date(posting.getDate())
                 .goods(posting.getGoods())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostingResponseDto> findAllByGoods(SortBy sortByRequestDto){
+        List<Posting> all;
+        if(sortByRequestDto== SortBy.ASC){
+            all = postingRepository.findAllOrderByGoodsAsc();
+        }
+        else{
+            all = postingRepository.findAllOrderByGoodsDesc();
+        }
+        List<PostingResponseDto> response= new ArrayList<>();
+        all.forEach(i->response.add(PostingResponseDto.builder()
+                .postIdx(i.getPostingIdx())
+                .title(i.getTitle())
+                .date(i.getDate())
+                .member(i.getMember())
+                .content(i.getContent())
+                .goods(i.getGoods())
+                .fix(i.getFix())
+                .build()));
+        return response;
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostingResponseDto> findAllByDate(SortBy sortByRequestDto){
+        List<Posting> all;
+        if(sortByRequestDto== SortBy.ASC){
+            all = postingRepository.findAllOrderByDateAsc();
+        }
+        else{
+            all = postingRepository.findAllOrderByDateDesc();
+        }
+        List<PostingResponseDto> response= new ArrayList<>();
+        all.forEach(i->response.add(PostingResponseDto.builder()
+                .postIdx(i.getPostingIdx())
+                .title(i.getTitle())
+                .date(i.getDate())
+                .member(i.getMember())
+                .content(i.getContent())
+                .goods(i.getGoods())
+                .fix(i.getFix())
+                .build()));
+        return response;
     }
 
     @Transactional(readOnly = true)
