@@ -2,10 +2,7 @@ package com.management.diet.exception.Handler;
 
 import com.management.diet.exception.ErrorCode;
 import com.management.diet.exception.ErrorResponse;
-import com.management.diet.exception.exception.MemberNotExistsException;
-import com.management.diet.exception.exception.MemberNotFindException;
-import com.management.diet.exception.exception.PasswordNotCorrectException;
-import com.management.diet.exception.exception.ProfileNotExistsException;
+import com.management.diet.exception.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +49,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ProfileNotExistsException.class)
     public ResponseEntity<ErrorResponse> ProfileNotExistsExceptionHandler(HttpServletRequest request, HttpServletResponse response, ProfileNotExistsException ex){
         printExceptionMessage(request, ex,"Profile picture doesn't exists");
-        ErrorResponse errorResponse=new ErrorResponse(ErrorCode.PROFILE_NOT_EXISTS);
+        ErrorResponse errorResponse=new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
+    @ExceptionHandler(PostingNotFindException.class)
+    public ResponseEntity<ErrorResponse> PostingNotFindExceptionHandler(HttpServletRequest request, HttpServletResponse response, PostingNotFindException ex){
+        printExceptionMessage(request, ex, "Posting can't find");
+        ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
+    @ExceptionHandler(WriterNotSameException.class)
+    public ResponseEntity<ErrorResponse> WriterNotSameExceptionHandler(HttpServletRequest request, HttpServletResponse response, WriterNotSameException ex){
+        printExceptionMessage(request, ex, "Writer isn't same");
+        ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode());
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
     }
 

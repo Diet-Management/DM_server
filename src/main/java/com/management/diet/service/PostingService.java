@@ -3,8 +3,10 @@ package com.management.diet.service;
 import com.management.diet.domain.Member;
 import com.management.diet.domain.Posting;
 import com.management.diet.dto.request.PostingRequestDto;
-import com.management.diet.dto.response.MemberResponseDto;
 import com.management.diet.dto.response.PostingResponseDto;
+import com.management.diet.exception.ErrorCode;
+import com.management.diet.exception.exception.PostingNotFindException;
+import com.management.diet.exception.exception.WriterNotSameException;
 import com.management.diet.repository.PostingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +39,7 @@ public class PostingService {
         Posting posting = getPostingByIdx(postingIdx);
         Member writer = posting.getMember();
         if(member != writer){
-            throw new RuntimeException();
+            throw new WriterNotSameException("Writer isn't same", ErrorCode.WRITER_NOT_SAME);
         }
         postingRepository.delete(posting);
     }
@@ -49,7 +51,7 @@ public class PostingService {
         Posting posting = getPostingByIdx(postingIdx);
         Member writer = posting.getMember();
         if(member != writer){
-            throw new RuntimeException();
+            throw new WriterNotSameException("Writer isn't same", ErrorCode.WRITER_NOT_SAME);
         }
         posting.update(postingRequestDto);
     }
@@ -57,13 +59,13 @@ public class PostingService {
     @Transactional(readOnly = true)
     protected Posting getPostingByIdx(Long postingIdx){
         return postingRepository.findById(postingIdx)
-                .orElseThrow(()->new RuntimeException());
+                .orElseThrow(()-> new PostingNotFindException("Posting can't find", ErrorCode.POSTING_NOT_FIND));
     }
 
     @Transactional(readOnly = true)
     public PostingResponseDto getByIdx(Long postingIdx){
         Posting posting = postingRepository.findById(postingIdx)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new PostingNotFindException("Posting can't find", ErrorCode.POSTING_NOT_FIND));
         return PostingResponseDto.builder()
                 .postIdx(posting.getPostingIdx())
                 .title(posting.getTitle())
