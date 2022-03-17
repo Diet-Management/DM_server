@@ -71,6 +71,7 @@ public class PostingService {
                 .fix(posting.getFix())
                 .member(posting.getMember())
                 .date(posting.getDate())
+                .goods(posting.getGoods())
                 .build();
     }
 
@@ -84,8 +85,21 @@ public class PostingService {
                         .date(i.getDate())
                         .member(i.getMember())
                         .content(i.getContent())
+                        .goods(i.getGoods())
                         .fix(i.getFix())
                 .build()));
         return response;
+    }
+
+    @Transactional
+    public void addGoods(Long postingIdx){
+        Posting postingByIdx = getPostingByIdx(postingIdx);
+        postingByIdx.updateGoods(postingByIdx.getGoods()+1);
+    }
+
+    @Transactional
+    public void minusGoods(Long postingIdx){
+        Posting postingByIdx = getPostingByIdx(postingIdx);
+        postingByIdx.updateGoods(postingByIdx.getGoods()-1);
     }
 }

@@ -16,6 +16,7 @@ public class PostingResponseDto {
     private String title;
     private String content;
     private LocalDate date;
+    private int goods;
     private Boolean fix;
     private Member member;
 }

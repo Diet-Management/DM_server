@@ -32,6 +32,9 @@ public class Posting {
     @Column(name = "fix")
     private Boolean fix;
 
+    @Column(name = "goods")
+    private int goods;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -41,5 +44,12 @@ public class Posting {
         this.content=postingRequestDto.getContent();
         this.date=LocalDate.now();
         this.fix=true;
+    }
+
+    public void updateGoods(int goods){
+        if(goods<0){
+            throw new RuntimeException();
+        }
+        this.goods=goods;
     }
 }

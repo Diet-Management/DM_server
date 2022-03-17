@@ -46,4 +46,16 @@ public class PostingController {
         postingService.updatePosting(Authorization, postingIdx, postingRequestDto);
         return responseService.getSuccessResult();
     }
+
+    @PatchMapping("/posting/good/add/{postIdx}")
+    public CommonResultResponse addGood(@PathVariable Long postIdx){
+        postingService.addGoods(postIdx);
+        return responseService.getSuccessResult();
+    }
+
+    @PatchMapping("/posting/good/minus/{postIdx}")
+    public CommonResultResponse minusGood(@PathVariable Long postIdx){
+        postingService.minusGoods(postIdx);
+        return responseService.getSuccessResult();
+    }
 }
