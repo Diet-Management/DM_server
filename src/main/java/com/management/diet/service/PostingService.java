@@ -138,6 +138,22 @@ public class PostingService {
         return response;
     }
 
+    @Transactional(readOnly = true)
+    public List<PostingResponseDto> findByKeyWord(String keyWord){
+        List<Posting> all = postingRepository.findAllByTitleLike("%"+keyWord+"%");
+        List<PostingResponseDto> response= new ArrayList<>();
+        all.forEach(i->response.add(PostingResponseDto.builder()
+                .postIdx(i.getPostingIdx())
+                .title(i.getTitle())
+                .date(i.getDate())
+                .member(i.getMember())
+                .content(i.getContent())
+                .goods(i.getGoods())
+                .fix(i.getFix())
+                .build()));
+        return response;
+    }
+
     @Transactional
     public void addGoods(Long postingIdx){
         Posting postingByIdx = getPostingByIdx(postingIdx);

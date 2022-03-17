@@ -56,6 +56,11 @@ public class PostingController {
         return responseService.getListResult(postingService.findAllByDate(SortBy.DESC));
     }
 
+    @GetMapping("/posting/keyWord")
+    public ListResultResponse<PostingResponseDto> findAllByKeyWord(@RequestParam String keyWord){
+        return responseService.getListResult(postingService.findByKeyWord(keyWord));
+    }
+
     @DeleteMapping("/posting/{postingIdx}")
     public CommonResultResponse deletePosting(@RequestHeader String Authorization, @PathVariable Long postingIdx){
         postingService.deletePosting(Authorization, postingIdx);
