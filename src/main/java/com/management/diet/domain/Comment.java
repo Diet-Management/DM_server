@@ -22,4 +22,8 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member writer;
+
+    public void update(String content){
+        this.content=content;
+    }
 }

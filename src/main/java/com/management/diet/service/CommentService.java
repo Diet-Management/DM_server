@@ -4,6 +4,8 @@ import com.management.diet.domain.Comment;
 import com.management.diet.domain.Member;
 import com.management.diet.domain.Posting;
 import com.management.diet.dto.request.CommentRequestDto;
+import com.management.diet.exception.ErrorCode;
+import com.management.diet.exception.exception.WriterNotSameException;
 import com.management.diet.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,12 +20,26 @@ public class CommentService {
 
     @Transactional
     public Long writeComment(CommentRequestDto commentRequestDto, Long postingIdx,String accessToken){
-        String userEmail = memberService.getUserEmail(accessToken);
-        Member member = memberService.findMemberByEmail(userEmail);
+        Member member = extracted(accessToken);
         Comment comment = commentRequestDto.toEntity(member);
         Posting posting = postingService.getPostingByIdx(postingIdx);
         posting.getComments().add(comment);
         return commentRepository.save(comment).getCommentIdx();
     }
 
+    @Transactional
+    public void update(CommentRequestDto commentRequestDto, Long commentIdx, String accessToken){
+        Member member = extracted(accessToken);
+        Comment comment = commentRepository.findById(commentIdx)
+                .orElseThrow(() -> new RuntimeException());
+        if(comment.getWriter() != member){
+            throw new WriterNotSameException("Writer isn't same", ErrorCode.WRITER_NOT_SAME);
+        }
+        comment.update(commentRequestDto.getContent());
+    }
+
+    private Member extracted(String accessToken) {
+        String userEmail = memberService.getUserEmail(accessToken);
+        return memberService.findMemberByEmail(userEmail);
+    }
 }

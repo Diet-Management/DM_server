@@ -20,4 +20,10 @@ public class CommentController {
         commentService.writeComment(commentRequestDto, postingIdx, Authorization);
         return responseService.getSuccessResult();
     }
+
+    @PutMapping("/comment/{commentIdx}")
+    public CommonResultResponse commentUpdate(@RequestBody CommentRequestDto commentRequestDto, @RequestHeader String Authorization, @PathVariable Long commentIdx){
+        commentService.update(commentRequestDto, commentIdx, Authorization);
+        return responseService.getSuccessResult();
+    }
 }
