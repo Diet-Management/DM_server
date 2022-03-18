@@ -75,13 +75,14 @@ public class PostingService {
                 .member(posting.getMember())
                 .date(posting.getDate())
                 .goods(posting.getGoods())
+                .comments(posting.getComments())
                 .build();
     }
 
     @Transactional(readOnly = true)
     public List<PostingResponseDto> findAllByGoods(SortBy sortByRequestDto){
         List<Posting> all;
-        if(sortByRequestDto== SortBy.ASC){
+        if(sortByRequestDto == SortBy.ASC){
             all = postingRepository.findAllOrderByGoodsAsc();
         }
         else{
@@ -103,7 +104,7 @@ public class PostingService {
     @Transactional(readOnly = true)
     public List<PostingResponseDto> findAllByDate(SortBy sortByRequestDto){
         List<Posting> all;
-        if(sortByRequestDto== SortBy.ASC){
+        if(sortByRequestDto == SortBy.ASC){
             all = postingRepository.findAllOrderByDateAsc();
         }
         else{

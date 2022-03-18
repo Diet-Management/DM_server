@@ -1,0 +1,9 @@
+package com.management.diet.repository;
+
+import com.management.diet.domain.Comment;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface CommentRepository extends JpaRepository<Comment, Long> {
+}

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Builder
@@ -38,6 +39,9 @@ public class Posting {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToMany(cascade = CascadeType.REMOVE)
+    private List<Comment> comments;
 
     public void update(PostingRequestDto postingRequestDto){
         this.title=postingRequestDto.getTitle();
