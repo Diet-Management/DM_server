@@ -26,4 +26,10 @@ public class CommentController {
         commentService.update(commentRequestDto, commentIdx, Authorization);
         return responseService.getSuccessResult();
     }
+
+    @DeleteMapping("/comment/{commentIdx}")
+    public CommonResultResponse commentDelete(@RequestHeader String Authorization, @PathVariable Long commentIdx){
+        commentService.delete(Authorization, commentIdx);
+        return responseService.getSuccessResult();
+    }
 }

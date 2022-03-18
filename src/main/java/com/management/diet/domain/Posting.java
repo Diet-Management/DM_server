@@ -40,7 +40,7 @@ public class Posting {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "posting")
     private List<Comment> comments;
 
     public void update(PostingRequestDto postingRequestDto){

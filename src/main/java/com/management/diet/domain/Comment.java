@@ -1,5 +1,6 @@
 package com.management.diet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,11 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member writer;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "posting_id")
+    private Posting posting;
 
     public void update(String content){
         this.content=content;

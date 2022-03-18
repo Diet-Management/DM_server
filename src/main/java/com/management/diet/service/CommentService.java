@@ -21,8 +21,8 @@ public class CommentService {
     @Transactional
     public Long writeComment(CommentRequestDto commentRequestDto, Long postingIdx,String accessToken){
         Member member = extracted(accessToken);
-        Comment comment = commentRequestDto.toEntity(member);
         Posting posting = postingService.getPostingByIdx(postingIdx);
+        Comment comment = commentRequestDto.toEntity(member,posting);
         posting.getComments().add(comment);
         return commentRepository.save(comment).getCommentIdx();
     }
@@ -36,6 +36,18 @@ public class CommentService {
             throw new WriterNotSameException("Writer isn't same", ErrorCode.WRITER_NOT_SAME);
         }
         comment.update(commentRequestDto.getContent());
+    }
+
+    @Transactional
+    public void delete(String accessToken, Long commentIdx){
+        System.out.println("test1");
+        Member member = extracted(accessToken);
+        Comment comment = commentRepository.findById(commentIdx)
+                .orElseThrow(() -> new RuntimeException());
+        if(member != comment.getWriter()){
+            throw new WriterNotSameException("Writer isn't same", ErrorCode.WRITER_NOT_SAME);
+        }
+        commentRepository.delete(comment);
     }
 
     private Member extracted(String accessToken) {
