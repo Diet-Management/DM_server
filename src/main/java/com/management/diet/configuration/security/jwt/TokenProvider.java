@@ -13,12 +13,14 @@ import java.util.Date;
 
 @Component
 public class TokenProvider {
-    public static final  long ACCESS_TOKEN_EXPIRED_TIME = 1000*60*30;
+    public static final  long ACCESS_TOKEN_EXPIRED_TIME = 1000*60*60*3;//accessToken의 만료기간을 3시간으로 설정
+    public static long REFRESH_TOKEN_EXPIRED_TIME = ACCESS_TOKEN_EXPIRED_TIME * 24 * 180; // 6달을 refreshToken 만료 기간으로 잡는다.
     @Value("${jwt.secret}")
     private String secretKey;
     @AllArgsConstructor
     enum TokenType{
         ACCESS_TOKEN("accessToken"),
+        REFRESH_TOKEN("refreshToken")
         ;
         private String value;
     }
@@ -68,5 +70,8 @@ public class TokenProvider {
     }
     public String generateAccessToken(String email){
         return doGenarateToken(email, TokenType.ACCESS_TOKEN, ACCESS_TOKEN_EXPIRED_TIME);
+    }
+    public String generateRefreshToken(String email){
+        return doGenarateToken(email, TokenType.REFRESH_TOKEN, REFRESH_TOKEN_EXPIRED_TIME);
     }
 }
