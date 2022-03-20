@@ -7,6 +7,7 @@ import com.management.diet.dto.request.MemberRequestDto;
 import com.management.diet.dto.response.MemberLoginResponseDto;
 import com.management.diet.dto.response.MemberResponseDto;
 import com.management.diet.exception.ErrorCode;
+import com.management.diet.exception.exception.AccessTokenExpiredException;
 import com.management.diet.exception.exception.MemberNotExistsException;
 import com.management.diet.exception.exception.MemberNotFindException;
 import com.management.diet.exception.exception.PasswordNotCorrectException;
@@ -40,15 +41,18 @@ public class MemberService {
             throw new PasswordNotCorrectException("Password isn't correct", ErrorCode.PASSWORD_NOT_CORRECT);
         }
         final String accessToken=tokenProvider.generateAccessToken(member.getEmail());
+        final String refreshToken=tokenProvider.generateRefreshToken(member.getEmail());
+        member.updateRefreshToken(refreshToken);
         MemberLoginResponseDto responseDto = MemberLoginResponseDto.builder()
-                .theme(member.getTheme())
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
         return responseDto;
     }
 
     @Transactional
     public void withdrawalMember(String accessToken){
+        IsAccessTokenExpired(accessToken);
         String userEmail = getUserEmail(accessToken);
         Member member = memberRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new MemberNotFindException("Member can't find to accessToken", ErrorCode.MEMBER_NOT_FIND));
@@ -58,9 +62,15 @@ public class MemberService {
     protected String getUserEmail(String accessToken){
         return tokenProvider.getUserEmail(accessToken);
     }
+    protected void IsAccessTokenExpired(String accessToken) {
+        if(tokenProvider.isTokenExpired(accessToken)){
+            throw new AccessTokenExpiredException("AccessToken is expired", ErrorCode.ACCESS_TOKEN_EXPIRED);
+        }
+    }
 
     @Transactional
     public void uploadProfile(String fileName,String accessToken){
+        IsAccessTokenExpired(accessToken);
         Member member = memberRepository.findByEmail(getUserEmail(accessToken))
                 .orElseThrow(() -> new MemberNotFindException("Member can't find to accessToken", ErrorCode.MEMBER_NOT_FIND));
         member.updateProfile(fileName);
@@ -75,9 +85,11 @@ public class MemberService {
                 .name(member.getName())
                 .profile(member.getProfile())
                 .postings(member.getPostings())
+                .theme(member.getTheme())
                 .build();
         return memberResponseDto;
     }
+
     @Transactional(readOnly = true)
     public Member findMemberByEmail(String email){
         Member member = memberRepository.findByEmail(email)

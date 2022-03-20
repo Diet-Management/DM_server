@@ -20,6 +20,7 @@ public class CommentService {
 
     @Transactional
     public Long writeComment(CommentRequestDto commentRequestDto, Long postingIdx,String accessToken){
+        memberService.IsAccessTokenExpired(accessToken);
         Member member = extracted(accessToken);
         Posting posting = postingService.getPostingByIdx(postingIdx);
         Comment comment = commentRequestDto.toEntity(member,posting);
@@ -29,6 +30,7 @@ public class CommentService {
 
     @Transactional
     public void update(CommentRequestDto commentRequestDto, Long commentIdx, String accessToken){
+        memberService.IsAccessTokenExpired(accessToken);
         Member member = extracted(accessToken);
         Comment comment = commentRepository.findById(commentIdx)
                 .orElseThrow(() -> new RuntimeException());
@@ -40,7 +42,7 @@ public class CommentService {
 
     @Transactional
     public void delete(String accessToken, Long commentIdx){
-        System.out.println("test1");
+        memberService.IsAccessTokenExpired(accessToken);
         Member member = extracted(accessToken);
         Comment comment = commentRepository.findById(commentIdx)
                 .orElseThrow(() -> new RuntimeException());

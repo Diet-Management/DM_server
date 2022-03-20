@@ -25,6 +25,7 @@ public class PostingService {
 
     @Transactional
     public Long save(PostingRequestDto postingRequestDto,String accessToken){
+        memberService.IsAccessTokenExpired(accessToken);
         String userEmail = memberService.getUserEmail(accessToken);
         Member member = memberService.findMemberByEmail(userEmail);
         Posting posting = postingRequestDto.toEntity(member, LocalDate.now());
@@ -35,6 +36,7 @@ public class PostingService {
 
     @Transactional
     public void deletePosting(String accessToken,Long postingIdx){
+        memberService.IsAccessTokenExpired(accessToken);
         String userEmail = memberService.getUserEmail(accessToken);
         Member member = memberService.findMemberByEmail(userEmail);
         Posting posting = getPostingByIdx(postingIdx);
@@ -47,6 +49,7 @@ public class PostingService {
 
     @Transactional
     public void updatePosting(String accessToken,Long postingIdx, PostingRequestDto postingRequestDto){
+        memberService.IsAccessTokenExpired(accessToken);
         String userEmail = memberService.getUserEmail(accessToken);
         Member member = memberService.findMemberByEmail(userEmail);
         Posting posting = getPostingByIdx(postingIdx);

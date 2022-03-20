@@ -42,11 +42,18 @@ public class Member implements UserDetails {
     private String profile;
 
     @JsonIgnore
+    @Column(name="refreshToken")
+    private String refreshToken;
+
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "member")
     private List<Posting> postings;
 
     public void updateProfile(String profile){
         this.profile=profile;
+    }
+    public void updateRefreshToken(String refreshToken){
+        this.refreshToken=refreshToken;
     }
 
     @Override

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor @NoArgsConstructor
 public class MemberLoginResponseDto {
-    private Theme theme;
     private String accessToken;
+    private String refreshToken;
 }
