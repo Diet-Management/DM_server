@@ -5,6 +5,7 @@ import com.management.diet.exception.ErrorCode;
 import com.management.diet.exception.ErrorResponse;
 import com.management.diet.exception.exception.AccessTokenExpiredException;
 import com.management.diet.exception.exception.InvalidTokenException;
+import com.management.diet.exception.exception.RefreshTokenExpiredException;
 import com.management.diet.exception.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,9 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
             responseErrorMessage(response, e.getErrorCode());
         } catch(AccessTokenExpiredException e){
             responseErrorMessage(response, e.getErrorCode());
-        } catch (UserNotFoundException e){
+        } catch(RefreshTokenExpiredException e){
+            responseErrorMessage(response, e.getErrorCode());
+        }catch (UserNotFoundException e){
             responseErrorMessage(response, e.getErrorCode());
         }catch(Exception e){
             log.error("알 수 없는 에러", e);

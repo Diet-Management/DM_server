@@ -1,5 +1,7 @@
 package com.management.diet.configuration.security.jwt;
 
+import com.management.diet.exception.ErrorCode;
+import com.management.diet.exception.exception.AccessTokenExpiredException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
@@ -14,7 +16,7 @@ import java.util.Date;
 @Component
 public class TokenProvider {
     public static final  long ACCESS_TOKEN_EXPIRED_TIME = 1000*60*60*3;//accessToken의 만료기간을 3시간으로 설정
-    public static long REFRESH_TOKEN_EXPIRED_TIME = ACCESS_TOKEN_EXPIRED_TIME * 24 * 180; // 6달을 refreshToken 만료 기간으로 잡는다.
+    public static long REFRESH_TOKEN_EXPIRED_TIME = ACCESS_TOKEN_EXPIRED_TIME/3 * 24 * 180; // 6달을 refreshToken 만료 기간으로 잡는다.
     @Value("${jwt.secret}")
     private String secretKey;
     @AllArgsConstructor
@@ -42,6 +44,9 @@ public class TokenProvider {
                 .getBody();
     }
     public String getUserEmail(String token){
+        if(isTokenExpired(token)){
+            throw new AccessTokenExpiredException("AccessToken is expired", ErrorCode.ACCESS_TOKEN_EXPIRED);
+        }
         return extractAllClaims(token).get(TokenClaimName.USER_EMAIL.value, String.class);
     }
     public String getTokenType(String token) {
@@ -55,7 +60,7 @@ public class TokenProvider {
             return true;
         }
     }
-    private String doGenarateToken(String userEmail, TokenType tokenType, long expireTime){
+    private String doGenerateToken(String userEmail, TokenType tokenType, long expireTime){
         final Claims claims = Jwts.claims();
         claims.put("userEmail", userEmail);
         claims.put("tokenType", tokenType.value);
@@ -67,9 +72,9 @@ public class TokenProvider {
                 .compact();
     }
     public String generateAccessToken(String email){
-        return doGenarateToken(email, TokenType.ACCESS_TOKEN, ACCESS_TOKEN_EXPIRED_TIME);
+        return doGenerateToken(email, TokenType.ACCESS_TOKEN, ACCESS_TOKEN_EXPIRED_TIME);
     }
     public String generateRefreshToken(String email){
-        return doGenarateToken(email, TokenType.REFRESH_TOKEN, REFRESH_TOKEN_EXPIRED_TIME);
+        return doGenerateToken(email, TokenType.REFRESH_TOKEN, REFRESH_TOKEN_EXPIRED_TIME);
     }
 }

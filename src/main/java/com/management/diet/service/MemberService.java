@@ -7,10 +7,7 @@ import com.management.diet.dto.request.MemberRequestDto;
 import com.management.diet.dto.response.MemberLoginResponseDto;
 import com.management.diet.dto.response.MemberResponseDto;
 import com.management.diet.exception.ErrorCode;
-import com.management.diet.exception.exception.AccessTokenExpiredException;
-import com.management.diet.exception.exception.MemberNotExistsException;
-import com.management.diet.exception.exception.MemberNotFindException;
-import com.management.diet.exception.exception.PasswordNotCorrectException;
+import com.management.diet.exception.exception.*;
 import com.management.diet.repository.MemberRepository;
 import com.management.diet.util.CurrentMemberUtil;
 import lombok.RequiredArgsConstructor;
@@ -71,9 +68,9 @@ public class MemberService {
 
     public MemberLoginResponseDto generateNewAccessToken(String refreshToken){
         if(tokenProvider.isTokenExpired(refreshToken)){
-            throw new RuntimeException();
+            throw new RefreshTokenExpiredException("RefreshToken is expired", ErrorCode.REFRESH_TOKEN_EXPIRED);
         }
-        String userEmail = CurrentMemberUtil.getCurrentEmail();
+        String userEmail = getUserEmail(refreshToken);
         String accessToken = tokenProvider.generateAccessToken(userEmail);
         return MemberLoginResponseDto.builder()
                 .accessToken(accessToken)
