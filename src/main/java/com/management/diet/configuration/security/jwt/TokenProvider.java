@@ -57,9 +57,7 @@ public class TokenProvider {
     }
     private String doGenarateToken(String userEmail, TokenType tokenType, long expireTime){
         final Claims claims = Jwts.claims();
-        if (TokenType.ACCESS_TOKEN == tokenType){
-            claims.put("userEmail", userEmail);
-        }
+        claims.put("userEmail", userEmail);
         claims.put("tokenType", tokenType.value);
         return Jwts.builder()
                 .setClaims(claims)

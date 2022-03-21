@@ -11,6 +11,7 @@ public enum ErrorCode {
     UNAUTHORIZED(401, "Unauthorized", ErrorClassification.COMMON+"-ERR-401"),
     FORBIDDEN(403, "Forbidden", ErrorClassification.COMMON+"-ERR-403"),
     ACCESS_TOKEN_EXPIRED(403, "AccessToken is expired", ErrorClassification.MEMBER+"-ERR403"),
+    REFRESH_TOKEN_EXPIRED(403, "RefreshToken is expired", ErrorClassification.MEMBER+"-ERR403"),
     MEMBER_NOT_FIND(404, "Member can't find", ErrorClassification.MEMBER+"-ERR-404"),
     PASSWORD_NOT_CORRECT(404, "Password is not correct", ErrorClassification.MEMBER+"-ERR-404"),
     NOT_COINCIDE_API(400, "This request is not coincide API spec", ErrorClassification.COMMON+"-ERR-400"),

@@ -12,6 +12,7 @@ import com.management.diet.exception.exception.MemberNotExistsException;
 import com.management.diet.exception.exception.MemberNotFindException;
 import com.management.diet.exception.exception.PasswordNotCorrectException;
 import com.management.diet.repository.MemberRepository;
+import com.management.diet.util.CurrentMemberUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -66,6 +67,18 @@ public class MemberService {
         if(tokenProvider.isTokenExpired(accessToken)){
             throw new AccessTokenExpiredException("AccessToken is expired", ErrorCode.ACCESS_TOKEN_EXPIRED);
         }
+    }
+
+    public MemberLoginResponseDto generateNewAccessToken(String refreshToken){
+        if(tokenProvider.isTokenExpired(refreshToken)){
+            throw new RuntimeException();
+        }
+        String userEmail = CurrentMemberUtil.getCurrentEmail();
+        String accessToken = tokenProvider.generateAccessToken(userEmail);
+        return MemberLoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     @Transactional

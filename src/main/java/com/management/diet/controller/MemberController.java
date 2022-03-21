@@ -88,4 +88,9 @@ public class MemberController {
                 .contentType(MediaType.parseMediaType(Files.probeContentType(path)))
                 .body(resource);
     }
+
+    @GetMapping("/member/token")
+    public SingleResultResponse<MemberLoginResponseDto> newToken(@RequestHeader String refreshToken){
+        return responseService.getSingleResult(memberService.generateNewAccessToken(refreshToken));
+    }
 }
