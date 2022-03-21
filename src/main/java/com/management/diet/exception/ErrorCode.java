@@ -20,6 +20,7 @@ public enum ErrorCode {
     PROFILE_NOT_EXISTS(404, "Profile Picture can't find", ErrorClassification.COMMON+"-ERR-404"),
     POSTING_NOT_FIND(404, "Posting can't find exception", ErrorClassification.COMMON+"-ERR-404"),
     WRITER_NOT_SAME(401, "Writer isn't same", ErrorClassification.MEMBER+"-ERR-401"),
+    COMMENT_NOT_FIND(404, "Commemnt can't find",  ErrorClassification.COMMON+"-ERR-404"),
     ;
 
     private int status;

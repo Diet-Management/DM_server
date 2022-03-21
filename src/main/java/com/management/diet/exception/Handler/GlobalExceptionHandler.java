@@ -67,6 +67,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
     }
 
+    @ExceptionHandler(CommentNotFindException.class)
+    public ResponseEntity<ErrorResponse> CommentNotFindExceptionHandler(HttpServletRequest request, HttpServletResponse response, CommentNotFindException ex){
+        printExceptionMessage(request, ex, "Comment can't find");
+        ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
     private void printExceptionMessage(HttpServletRequest request, Exception ex, String message) {
         log.error(request.getRequestURI());
         log.error(message);
