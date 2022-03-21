@@ -24,7 +24,7 @@ public class PostingService {
     private final MemberService memberService;
 
     @Transactional
-    public Long save(PostingRequestDto postingRequestDto,String accessToken){
+    public Long save(PostingRequestDto postingRequestDto, String accessToken){
         memberService.IsAccessTokenExpired(accessToken);
         String userEmail = memberService.getUserEmail(accessToken);
         Member member = memberService.findMemberByEmail(userEmail);
@@ -35,7 +35,7 @@ public class PostingService {
     }
 
     @Transactional
-    public void deletePosting(String accessToken,Long postingIdx){
+    public void deletePosting(String accessToken, Long postingIdx){
         memberService.IsAccessTokenExpired(accessToken);
         String userEmail = memberService.getUserEmail(accessToken);
         Member member = memberService.findMemberByEmail(userEmail);
@@ -48,7 +48,7 @@ public class PostingService {
     }
 
     @Transactional
-    public void updatePosting(String accessToken,Long postingIdx, PostingRequestDto postingRequestDto){
+    public void updatePosting(String accessToken, Long postingIdx, PostingRequestDto postingRequestDto){
         memberService.IsAccessTokenExpired(accessToken);
         String userEmail = memberService.getUserEmail(accessToken);
         Member member = memberService.findMemberByEmail(userEmail);

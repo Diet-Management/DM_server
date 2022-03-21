@@ -9,7 +9,6 @@ import com.management.diet.dto.response.MemberResponseDto;
 import com.management.diet.exception.ErrorCode;
 import com.management.diet.exception.exception.*;
 import com.management.diet.repository.MemberRepository;
-import com.management.diet.util.CurrentMemberUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -66,18 +65,6 @@ public class MemberService {
         }
     }
 
-    public MemberLoginResponseDto generateNewAccessToken(String refreshToken){
-        if(tokenProvider.isTokenExpired(refreshToken)){
-            throw new RefreshTokenExpiredException("RefreshToken is expired", ErrorCode.REFRESH_TOKEN_EXPIRED);
-        }
-        String userEmail = getUserEmail(refreshToken);
-        String accessToken = tokenProvider.generateAccessToken(userEmail);
-        return MemberLoginResponseDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
-
     @Transactional
     public void uploadProfile(String fileName,String accessToken){
         IsAccessTokenExpired(accessToken);
@@ -105,5 +92,17 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFindException("Member can't find", ErrorCode.MEMBER_NOT_FIND));
         return member;
+    }
+
+    public MemberLoginResponseDto generateNewAccessToken(String refreshToken){
+        if(tokenProvider.isTokenExpired(refreshToken)){
+            throw new RefreshTokenExpiredException("RefreshToken is expired", ErrorCode.REFRESH_TOKEN_EXPIRED);
+        }
+        String userEmail = getUserEmail(refreshToken);
+        String accessToken = tokenProvider.generateAccessToken(userEmail);
+        return MemberLoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 }

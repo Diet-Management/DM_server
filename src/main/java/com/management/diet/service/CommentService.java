@@ -19,7 +19,7 @@ public class CommentService {
     private final PostingService postingService;
 
     @Transactional
-    public Long writeComment(CommentRequestDto commentRequestDto, Long postingIdx,String accessToken){
+    public Long writeComment(CommentRequestDto commentRequestDto, Long postingIdx, String accessToken){
         memberService.IsAccessTokenExpired(accessToken);
         Member member = extracted(accessToken);
         Posting posting = postingService.getPostingByIdx(postingIdx);
