@@ -18,7 +18,8 @@ import java.util.List;
 @AllArgsConstructor @NoArgsConstructor
 public class Posting {
     @Id
-    @GeneratedValue @Column(name = "posting_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "posting_id")
     private Long postingIdx;
 
     @Column(name = "title")

@@ -14,7 +14,8 @@ import javax.persistence.*;
 @AllArgsConstructor @NoArgsConstructor
 public class Comment {
     @Id
-    @GeneratedValue @Column(name = "comment_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id")
     private Long commentIdx;
 
     @Column(name = "content")
