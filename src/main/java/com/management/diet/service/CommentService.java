@@ -5,6 +5,7 @@ import com.management.diet.domain.Member;
 import com.management.diet.domain.Posting;
 import com.management.diet.dto.request.CommentRequestDto;
 import com.management.diet.exception.ErrorCode;
+import com.management.diet.exception.exception.CommentNotFindException;
 import com.management.diet.exception.exception.WriterNotSameException;
 import com.management.diet.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class CommentService {
         memberService.IsAccessTokenExpired(accessToken);
         Member member = extracted(accessToken);
         Comment comment = commentRepository.findById(commentIdx)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new CommentNotFindException("Comment can't find", ErrorCode.COMMENT_NOT_FIND));
         if(comment.getWriter() != member){
             throw new WriterNotSameException("Writer isn't same", ErrorCode.WRITER_NOT_SAME);
         }
@@ -45,7 +46,7 @@ public class CommentService {
         memberService.IsAccessTokenExpired(accessToken);
         Member member = extracted(accessToken);
         Comment comment = commentRepository.findById(commentIdx)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new CommentNotFindException("Comment can't find", ErrorCode.COMMENT_NOT_FIND));
         if(member != comment.getWriter()){
             throw new WriterNotSameException("Writer isn't same", ErrorCode.WRITER_NOT_SAME);
         }
