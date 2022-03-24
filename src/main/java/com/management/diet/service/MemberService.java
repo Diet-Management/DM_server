@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,11 @@ public class MemberService {
 
     @Transactional
     public Long join(MemberRequestDto memberRequestDto){
+        Optional<Member> byEmail = memberRepository.findByEmail(memberRequestDto.getEmail());
+        System.out.println("byEmail = " + byEmail);
+        if(!byEmail.isEmpty()){
+            throw new DuplicateMemberException("Member is duplicate", ErrorCode.DUPLICATE_MEMBER);
+        }
         memberRequestDto.setPassword(passwordEncoder.encode(memberRequestDto.getPassword()));
         Member member = memberRequestDto.toEntity();
         memberRepository.save(member);
