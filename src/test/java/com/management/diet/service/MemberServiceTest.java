@@ -3,6 +3,7 @@ package com.management.diet.service;
 import com.management.diet.dto.request.MemberRequestDto;
 import com.management.diet.dto.response.MemberResponseDto;
 import com.management.diet.enums.Theme;
+import com.management.diet.exception.exception.DuplicateMemberException;
 import com.management.diet.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -36,5 +37,18 @@ class MemberServiceTest {
         //then
         Assertions.assertThat(member.getMemberIdx()).isEqualTo(join);
         Assertions.assertThat(member.getName()).isEqualTo(memberRequestDto.getName());
+    }
+
+    @Test
+    public void notDuplicateMember(){
+        //given
+        MemberRequestDto memberRequestDto = new MemberRequestDto("test@gmail.com", "test", "1234", Theme.BLACK);
+        memberService.join(memberRequestDto);
+
+        //when
+        MemberRequestDto test = new MemberRequestDto("test@gmail.com", "test", "1234", Theme.BLACK);
+
+        //then
+        org.junit.jupiter.api.Assertions.assertThrows(DuplicateMemberException.class, ()->memberService.join(test));
     }
 }
