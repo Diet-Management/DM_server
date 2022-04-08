@@ -27,14 +27,12 @@ public class MemberService {
     @Transactional
     public Long join(MemberRequestDto memberRequestDto){
         Optional<Member> byEmail = memberRepository.findByEmail(memberRequestDto.getEmail());
-        System.out.println("byEmail = " + byEmail);
         if(!byEmail.isEmpty()){
             throw new DuplicateMemberException("Member is duplicate", ErrorCode.DUPLICATE_MEMBER);
         }
         memberRequestDto.setPassword(passwordEncoder.encode(memberRequestDto.getPassword()));
         Member member = memberRequestDto.toEntity();
-        memberRepository.save(member);
-        return member.getMember_idx();
+        return memberRepository.save(member).getMember_idx();
     }
 
     @Transactional

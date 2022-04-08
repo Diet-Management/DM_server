@@ -19,7 +19,7 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 public class Member implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "member_id")
     private Long member_idx;
 
