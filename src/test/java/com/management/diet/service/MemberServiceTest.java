@@ -1,6 +1,9 @@
 package com.management.diet.service;
 
+import com.management.diet.configuration.security.jwt.TokenProvider;
+import com.management.diet.dto.request.MemberLoginDto;
 import com.management.diet.dto.request.MemberRequestDto;
+import com.management.diet.dto.response.MemberLoginResponseDto;
 import com.management.diet.dto.response.MemberResponseDto;
 import com.management.diet.enums.Theme;
 import com.management.diet.exception.exception.DuplicateMemberException;
@@ -21,6 +24,8 @@ class MemberServiceTest {
     private MemberService memberService;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private TokenProvider tokenProvider;
 
     @AfterEach
     public void init(){
@@ -52,5 +57,19 @@ class MemberServiceTest {
 
         //then
         org.junit.jupiter.api.Assertions.assertThrows(DuplicateMemberException.class, ()->memberService.join(test));
+    }
+
+    @Test
+    public void login(){
+        //given
+        MemberRequestDto memberRequestDto = new MemberRequestDto("test@gmail.com", "test", "1234", Theme.BLACK);
+        memberService.join(memberRequestDto);
+        MemberLoginDto memberLoginDto = new MemberLoginDto("test@gmail.com", "1234");
+
+        //when
+        MemberLoginResponseDto login = memberService.login(memberLoginDto);
+
+        //then
+        Assertions.assertThat(tokenProvider.getUserEmail(login.getAccessToken())).isEqualTo("test@gmail.com");
     }
 }
