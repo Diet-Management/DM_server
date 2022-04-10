@@ -7,6 +7,7 @@ import com.management.diet.dto.response.MemberLoginResponseDto;
 import com.management.diet.dto.response.MemberResponseDto;
 import com.management.diet.enums.Theme;
 import com.management.diet.exception.exception.DuplicateMemberException;
+import com.management.diet.exception.exception.MemberNotFindException;
 import com.management.diet.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -89,6 +90,22 @@ class MemberServiceTest {
 
         //then
         Assertions.assertThat(memberService.findMemberByEmail("test@gmail.com").getRefreshToken()).isEqualTo(null);
+    }
+
+    @Test
+    public void withdrawal(){
+        //given
+        MemberRequestDto memberRequestDto = new MemberRequestDto("test@gmail.com", "test", "1234", Theme.BLACK);
+        memberService.join(memberRequestDto);
+        MemberLoginDto loginDto = new MemberLoginDto("test@gmail.com", "1234");
+        MemberLoginResponseDto login = memberService.login(loginDto);
+        String accessToken = login.getAccessToken();
+
+        //when
+        memberService.withdrawalMember(accessToken);
+
+        //then
+        assertThrows(MemberNotFindException.class, () -> memberService.findMemberByEmail(tokenProvider.getUserEmail(accessToken)));
     }
 
     private void login(MemberLoginDto loginDto, MemberRequestDto memberRequestDto) {
