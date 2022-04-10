@@ -108,6 +108,19 @@ class MemberServiceTest {
         assertThrows(MemberNotFindException.class, () -> memberService.findMemberByEmail(tokenProvider.getUserEmail(accessToken)));
     }
 
+    @Test
+    public void findByMemberIdx(){
+        //given
+        MemberRequestDto memberRequestDto = new MemberRequestDto("test@gmail.com", "test", "1234", Theme.BLACK);
+        Long memberIdx = memberService.join(memberRequestDto);
+
+        //when
+        MemberResponseDto member = memberService.findMemberByIdx(memberIdx);
+
+        //then
+        Assertions.assertThat(member.getName()).isEqualTo(memberRequestDto.getName());
+    }
+
     private void login(MemberLoginDto loginDto, MemberRequestDto memberRequestDto) {
         memberService.login(loginDto);
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
