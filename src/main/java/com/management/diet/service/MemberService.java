@@ -53,6 +53,13 @@ public class MemberService {
     }
 
     @Transactional
+    public void logout(String accessToken){
+        String userEmail = getUserEmail(accessToken);
+        Member memberByEmail = findMemberByEmail(userEmail);
+        memberByEmail.updateRefreshToken(null);
+    }
+
+    @Transactional
     public void withdrawalMember(String accessToken){
         IsAccessTokenExpired(accessToken);
         String userEmail = getUserEmail(accessToken);

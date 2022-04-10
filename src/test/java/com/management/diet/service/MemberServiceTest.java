@@ -13,6 +13,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,5 +74,29 @@ class MemberServiceTest {
 
         //then
         Assertions.assertThat(tokenProvider.getUserEmail(login.getAccessToken())).isEqualTo("test@gmail.com");
+    }
+
+    @Test
+    public void logout(){
+        //given
+        MemberRequestDto memberRequestDto = new MemberRequestDto("test@gmail.com", "test", "1234", Theme.BLACK);
+        memberService.join(memberRequestDto);
+        MemberLoginDto memberLoginDto = new MemberLoginDto("test@gmail.com", "1234");
+        MemberLoginResponseDto login = memberService.login(memberLoginDto);
+
+        //when
+        memberService.logout(login.getAccessToken());
+
+        //then
+        Assertions.assertThat(memberService.findMemberByEmail("test@gmail.com").getRefreshToken()).isEqualTo(null);
+    }
+
+    private void login(MemberLoginDto loginDto, MemberRequestDto memberRequestDto) {
+        memberService.login(loginDto);
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                memberRequestDto.getEmail(),
+                memberRequestDto.getPassword());
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(token);
     }
 }
