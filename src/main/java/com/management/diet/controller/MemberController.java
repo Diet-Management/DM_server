@@ -30,12 +30,9 @@ import java.nio.file.Path;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1")
-@Slf4j
 public class MemberController {
     private final MemberService memberService;
     private final ResponseService responseService;
-    @Value("${file.upload.location}")
-    private String fileDir;
 
     @PostMapping("/member/join")
     public CommonResultResponse join(@RequestBody MemberRequestDto memberDto){
@@ -61,18 +58,7 @@ public class MemberController {
 
     @PatchMapping("/member/profile")
     public CommonResultResponse updateProfile(@RequestParam MultipartFile file, @RequestHeader String Authorization){
-        log.info(" fileDir = {}",fileDir);
-        if(file.isEmpty()){
-            throw new FileNotExistsException("File doesn't exist", ErrorCode.FILE_NOT_EXISTS);
-        }
-        String fullPath = fileDir + file.getOriginalFilename();
-        log.info(" fileDir = {}",fullPath);
-        try{
-            file.transferTo(new File(fullPath));
-        }catch (IOException e){
-            throw new WrongPathException("Path isn't right",ErrorCode.WRONG_PATH);
-        }
-        memberService.uploadProfile(fullPath, Authorization);
+        memberService.uploadProfile(file, Authorization);
         return responseService.getSuccessResult();
     }
 

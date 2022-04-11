@@ -10,19 +10,27 @@ import com.management.diet.exception.ErrorCode;
 import com.management.diet.exception.exception.*;
 import com.management.diet.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
+    @Value("${file.upload.location}")
+    private String fileDir;
 
     @Transactional
     public Long join(MemberRequestDto memberRequestDto){
@@ -78,11 +86,22 @@ public class MemberService {
     }
 
     @Transactional
-    public void uploadProfile(String fileName,String accessToken){
+    public void uploadProfile(MultipartFile file, String accessToken){
         IsAccessTokenExpired(accessToken);
+        log.info(" fileDir = {}",fileDir);
+        if(file.isEmpty()){
+            throw new FileNotExistsException("File doesn't exist", ErrorCode.FILE_NOT_EXISTS);
+        }
+        String fullPath = fileDir + file.getOriginalFilename();
+        log.info(" fileDir = {}",fullPath);
+        try{
+            file.transferTo(new File(fullPath));
+        }catch (IOException e){
+            throw new WrongPathException("Path isn't right",ErrorCode.WRONG_PATH);
+        }
         Member member = memberRepository.findByEmail(getUserEmail(accessToken))
                 .orElseThrow(() -> new MemberNotFindException("Member can't find to accessToken", ErrorCode.MEMBER_NOT_FIND));
-        member.updateProfile(fileName);
+        member.updateProfile(fullPath);
     }
 
     @Transactional(readOnly = true)
