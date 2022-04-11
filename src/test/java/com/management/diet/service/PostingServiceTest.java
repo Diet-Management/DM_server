@@ -4,6 +4,7 @@ import com.management.diet.dto.request.MemberLoginDto;
 import com.management.diet.dto.request.MemberRequestDto;
 import com.management.diet.dto.request.PostingRequestDto;
 import com.management.diet.dto.response.MemberLoginResponseDto;
+import com.management.diet.dto.response.PostingResponseDto;
 import com.management.diet.enums.Theme;
 import com.management.diet.repository.MemberRepository;
 import com.management.diet.repository.PostingRepository;
@@ -33,8 +34,10 @@ class PostingServiceTest {
     private MemberService memberService;
     @Autowired
     private PostingRepository postingRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
-    @PostConstruct
+    @BeforeEach
     public void createMember(){
         MemberRequestDto memberRequestDto = new MemberRequestDto("test@gmail.com", "test", "1234", Theme.BLACK);
         memberService.join(memberRequestDto);
@@ -43,6 +46,7 @@ class PostingServiceTest {
     }
     @AfterEach
     public void init(){
+        memberRepository.deleteAll();
         postingRepository.deleteAll();
     }
 
@@ -56,5 +60,16 @@ class PostingServiceTest {
 
         //then
         Assertions.assertThat(postingRequestDto.getTitle()).isEqualTo(postingService.getPostingByIdx(save).getTitle());
+    }
+
+    @Test
+    public void findOne(){
+        PostingRequestDto postingRequestDto = new PostingRequestDto("title", "content");
+        Long save = postingService.save(postingRequestDto, login.getAccessToken());
+
+        PostingResponseDto posting = postingService.getByIdx(save);
+
+        Assertions.assertThat(posting.getTitle()).isEqualTo(postingRequestDto.getTitle());
+        Assertions.assertThat(posting.getContent()).isEqualTo(postingRequestDto.getContent());
     }
 }
