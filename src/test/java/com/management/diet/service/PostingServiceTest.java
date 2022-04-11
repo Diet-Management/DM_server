@@ -6,20 +6,16 @@ import com.management.diet.dto.request.PostingRequestDto;
 import com.management.diet.dto.response.MemberLoginResponseDto;
 import com.management.diet.dto.response.PostingResponseDto;
 import com.management.diet.enums.Theme;
+import com.management.diet.exception.exception.PostingNotFindException;
 import com.management.diet.repository.MemberRepository;
 import com.management.diet.repository.PostingRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.event.annotation.BeforeTestExecution;
-import org.springframework.test.context.event.annotation.BeforeTestMethod;
-
-import javax.annotation.PostConstruct;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -71,5 +67,15 @@ class PostingServiceTest {
 
         Assertions.assertThat(posting.getTitle()).isEqualTo(postingRequestDto.getTitle());
         Assertions.assertThat(posting.getContent()).isEqualTo(postingRequestDto.getContent());
+    }
+
+    @Test
+    public void deletePosting(){
+        PostingRequestDto postingRequestDto = new PostingRequestDto("title", "content");
+        Long save = postingService.save(postingRequestDto, login.getAccessToken());
+
+        postingService.deletePosting(login.getAccessToken(), save);
+
+        assertThrows(PostingNotFindException.class, ()-> postingService.getByIdx(save));
     }
 }
