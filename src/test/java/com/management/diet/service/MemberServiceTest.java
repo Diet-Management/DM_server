@@ -120,13 +120,4 @@ class MemberServiceTest {
         //then
         Assertions.assertThat(member.getName()).isEqualTo(memberRequestDto.getName());
     }
-
-    private void login(MemberLoginDto loginDto, MemberRequestDto memberRequestDto) {
-        memberService.login(loginDto);
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                memberRequestDto.getEmail(),
-                memberRequestDto.getPassword());
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(token);
-    }
 }
