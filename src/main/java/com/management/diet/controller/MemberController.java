@@ -4,17 +4,11 @@ import com.management.diet.dto.request.MemberLoginDto;
 import com.management.diet.dto.request.MemberRequestDto;
 import com.management.diet.dto.response.MemberLoginResponseDto;
 import com.management.diet.dto.response.MemberResponseDto;
-import com.management.diet.exception.ErrorCode;
-import com.management.diet.exception.exception.FileNotExistsException;
-import com.management.diet.exception.exception.ProfileNotExistsException;
-import com.management.diet.exception.exception.WrongPathException;
 import com.management.diet.response.ResponseService;
 import com.management.diet.response.result.CommonResultResponse;
 import com.management.diet.response.result.SingleResultResponse;
 import com.management.diet.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -22,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,11 +57,7 @@ public class MemberController {
 
     @GetMapping("/member/profile/{memberIdx}")
     public ResponseEntity<Resource> viewImg(@PathVariable Long memberIdx) throws IOException{
-        String profile = memberService.findMemberByIdx(memberIdx).getProfile();
-        if (profile==null){
-            throw new ProfileNotExistsException("Profile picture doesn't exist", ErrorCode.PROFILE_NOT_EXISTS);
-        }
-        Path path=new File(profile).toPath();
+        Path path = memberService.getProfile(memberIdx);
         FileSystemResource resource = new FileSystemResource(path);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(Files.probeContentType(path)))
