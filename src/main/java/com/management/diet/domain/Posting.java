@@ -41,7 +41,7 @@ public class Posting {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "posting")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "posting", fetch = FetchType.EAGER)
     private List<Comment> comments;
 
     public void update(PostingRequestDto postingRequestDto){
