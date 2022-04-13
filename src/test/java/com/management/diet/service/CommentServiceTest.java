@@ -87,4 +87,19 @@ class CommentServiceTest {
         assertThrows(IndexOutOfBoundsException.class, () -> comments.get(0));
         Assertions.assertThat(comments.size()).isEqualTo(0);
     }
+
+    @Test
+    public void update(){
+        //given
+        CommentRequestDto commentRequestDto = new CommentRequestDto("test");
+        Long commentIdx = commentService.writeComment(commentRequestDto, postingIdx, login.getAccessToken());
+        Assertions.assertThat(postingService.getPostingByIdx(postingIdx).getComments().get(0).getContent()).isEqualTo(commentRequestDto.getContent());
+
+        //when
+        CommentRequestDto commentRequestDto2 = new CommentRequestDto("content");
+        commentService.update(commentRequestDto2, commentIdx, login.getAccessToken());
+
+        //then
+        Assertions.assertThat(postingService.getPostingByIdx(postingIdx).getComments().get(0).getContent()).isEqualTo(commentRequestDto2.getContent());
+    }
 }
