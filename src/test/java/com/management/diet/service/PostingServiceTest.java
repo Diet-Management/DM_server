@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("dev")
@@ -77,5 +79,24 @@ class PostingServiceTest {
         postingService.deletePosting(login.getAccessToken(), save);
 
         assertThrows(PostingNotFindException.class, ()-> postingService.getByIdx(save));
+    }
+
+    @Test
+    public void findAll(){
+        //given
+        PostingRequestDto postingRequestDto = new PostingRequestDto("title", "content");
+        PostingRequestDto postingRequestDto2 = new PostingRequestDto("test", "몰?루");
+        postingService.save(postingRequestDto, login.getAccessToken());
+        postingService.save(postingRequestDto2, login.getAccessToken());
+
+        //when
+        List<PostingResponseDto> all = postingService.findAll();
+
+        //then
+        Assertions.assertThat(all.size()).isEqualTo(2);
+        Assertions.assertThat(all.get(0).getTitle()).isEqualTo("title");
+        Assertions.assertThat(all.get(0).getContent()).isEqualTo("content");
+        Assertions.assertThat(all.get(1).getTitle()).isEqualTo("test");
+        Assertions.assertThat(all.get(1).getContent()).isEqualTo("몰?루");
     }
 }
