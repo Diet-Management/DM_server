@@ -1,5 +1,6 @@
 package com.management.diet.service;
 
+import com.management.diet.domain.Comment;
 import com.management.diet.dto.request.CommentRequestDto;
 import com.management.diet.dto.request.MemberLoginDto;
 import com.management.diet.dto.request.MemberRequestDto;
@@ -17,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,6 +40,7 @@ class CommentServiceTest {
     private CommentRepository commentRepository;
 
     private MemberLoginResponseDto login;
+    private Long postingIdx;
 
     @BeforeEach
     public void initialSetting(){
@@ -46,7 +50,7 @@ class CommentServiceTest {
         login = memberService.login(memberLoginDto);
 
         PostingRequestDto postingRequestDto = new PostingRequestDto("title", "content");
-        postingService.save(postingRequestDto, login.getAccessToken());
+        postingIdx = postingService.save(postingRequestDto, login.getAccessToken());
     }
 
     @AfterEach
@@ -61,11 +65,26 @@ class CommentServiceTest {
         CommentRequestDto commentRequestDto = new CommentRequestDto("test");
 
         //when
-        commentService.writeComment(commentRequestDto,2L, login.getAccessToken());
+        commentService.writeComment(commentRequestDto,postingIdx, login.getAccessToken());
 
         //then
-        PostingResponseDto posting = postingService.getByIdx(2L);
+        PostingResponseDto posting = postingService.getByIdx(postingIdx);
         Assertions.assertThat(posting.getComments().get(0).getContent()).isEqualTo(commentRequestDto.getContent());
         Assertions.assertThat(posting.getComments().size()).isEqualTo(1);
+    }
+
+    @Test
+    public void delete(){
+        //given
+        CommentRequestDto commentRequestDto = new CommentRequestDto("test");
+        Long commentIdx = commentService.writeComment(commentRequestDto, postingIdx, login.getAccessToken());
+
+        //when
+        commentService.delete(login.getAccessToken(), commentIdx);
+
+        //then
+        List<Comment> comments = postingService.getPostingByIdx(postingIdx).getComments();
+        assertThrows(IndexOutOfBoundsException.class, () -> comments.get(0));
+        Assertions.assertThat(comments.size()).isEqualTo(0);
     }
 }
