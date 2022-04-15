@@ -36,8 +36,6 @@ class CommentServiceTest {
     private MemberRepository memberRepository;
     @Autowired
     private PostingRepository postingRepository;
-    @Autowired
-    private CommentRepository commentRepository;
 
     private MemberLoginResponseDto login;
     private Long postingIdx;
