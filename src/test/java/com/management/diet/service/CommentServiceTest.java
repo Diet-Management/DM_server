@@ -8,7 +8,6 @@ import com.management.diet.dto.request.PostingRequestDto;
 import com.management.diet.dto.response.MemberLoginResponseDto;
 import com.management.diet.dto.response.PostingResponseDto;
 import com.management.diet.enums.Theme;
-import com.management.diet.repository.CommentRepository;
 import com.management.diet.repository.MemberRepository;
 import com.management.diet.repository.PostingRepository;
 import org.assertj.core.api.Assertions;
