@@ -5,7 +5,6 @@ import com.management.diet.domain.Member;
 import com.management.diet.domain.Posting;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
