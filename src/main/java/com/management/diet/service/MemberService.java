@@ -56,6 +56,7 @@ public class MemberService {
         final String refreshToken=tokenProvider.generateRefreshToken(member.getEmail());
         member.updateRefreshToken(refreshToken);
         MemberLoginResponseDto responseDto = MemberLoginResponseDto.builder()
+                .memberIdx(member.getMember_idx())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
