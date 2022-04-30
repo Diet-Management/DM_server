@@ -1,6 +1,5 @@
 package com.management.diet.controller;
 
-import com.management.diet.domain.Posting;
 import com.management.diet.dto.request.PostingRequestDto;
 import com.management.diet.dto.response.PostingResponseDto;
 import com.management.diet.enums.SortBy;
@@ -10,7 +9,6 @@ import com.management.diet.response.result.ListResultResponse;
 import com.management.diet.response.result.SingleResultResponse;
 import com.management.diet.service.PostingService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
