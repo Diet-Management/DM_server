@@ -1,6 +1,5 @@
 package com.management.diet.dto.response;
 
-import com.management.diet.enums.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
