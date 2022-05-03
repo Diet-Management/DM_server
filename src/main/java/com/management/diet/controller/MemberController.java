@@ -9,16 +9,12 @@ import com.management.diet.response.result.CommonResultResponse;
 import com.management.diet.response.result.SingleResultResponse;
 import com.management.diet.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 @RestController
 @RequiredArgsConstructor
@@ -57,11 +53,7 @@ public class MemberController {
 
     @GetMapping("/member/profile/{memberIdx}")
     public ResponseEntity<Resource> viewImg(@PathVariable Long memberIdx) throws IOException{
-        Path path = memberService.getProfile(memberIdx);
-        FileSystemResource resource = new FileSystemResource(path);
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(Files.probeContentType(path)))
-                .body(resource);
+        return memberService.getProfile(memberIdx);
     }
 
     @GetMapping("/member/token")

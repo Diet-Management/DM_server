@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -108,13 +112,16 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public Path getProfile(Long memberIdx){
+    public ResponseEntity<Resource> getProfile(Long memberIdx) throws IOException {
         String profile = findMemberByIdx(memberIdx).getProfile();
         if (profile==null){
             throw new ProfileNotExistsException("Profile picture doesn't exist", ErrorCode.PROFILE_NOT_EXISTS);
         }
         Path path=new File(profile).toPath();
-        return path;
+        FileSystemResource resource = new FileSystemResource(path);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(Files.probeContentType(path)))
+                .body(resource);
     }
 
     @Transactional(readOnly = true)
