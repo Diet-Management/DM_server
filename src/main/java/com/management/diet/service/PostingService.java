@@ -25,7 +25,7 @@ public class PostingService {
 
     @Transactional
     public Long save(PostingRequestDto postingRequestDto, String accessToken){
-        memberService.IsAccessTokenExpired(accessToken);
+        isTokenExpired(accessToken);
         String userEmail = memberService.getUserEmail(accessToken);
         Member member = memberService.findMemberByEmail(userEmail);
         Posting posting = postingRequestDto.toEntity(member, LocalDate.now());
@@ -36,7 +36,7 @@ public class PostingService {
 
     @Transactional
     public void deletePosting(String accessToken, Long postingIdx){
-        memberService.IsAccessTokenExpired(accessToken);
+        isTokenExpired(accessToken);
         String userEmail = memberService.getUserEmail(accessToken);
         Member member = memberService.findMemberByEmail(userEmail);
         Posting posting = getPostingByIdx(postingIdx);
@@ -49,7 +49,7 @@ public class PostingService {
 
     @Transactional
     public void updatePosting(String accessToken, Long postingIdx, PostingRequestDto postingRequestDto){
-        memberService.IsAccessTokenExpired(accessToken);
+        isTokenExpired(accessToken);
         String userEmail = memberService.getUserEmail(accessToken);
         Member member = memberService.findMemberByEmail(userEmail);
         Posting posting = getPostingByIdx(postingIdx);
@@ -91,70 +91,34 @@ public class PostingService {
         else{
             all = postingRepository.findAllOrderByGoodsDesc();
         }
-        List<PostingResponseDto> response= new ArrayList<>();
-        all.forEach(i->response.add(PostingResponseDto.builder()
-                .postIdx(i.getPostingIdx())
-                .title(i.getTitle())
-                .date(i.getDate())
-                .member(i.getMember())
-                .content(i.getContent())
-                .goods(i.getGoods())
-                .fix(i.getFix())
-                .build()));
+        List<PostingResponseDto> response = getPostingResponseDtoList(all);
         return response;
     }
 
     @Transactional(readOnly = true)
-    public List<PostingResponseDto> findAllByDate(SortBy sortByRequestDto){
+    public List<PostingResponseDto> findAllByDate(SortBy sortByDto){
         List<Posting> all;
-        if(sortByRequestDto == SortBy.ASC){
+        if(sortByDto == SortBy.ASC){
             all = postingRepository.findAllOrderByDateAsc();
         }
         else{
             all = postingRepository.findAllOrderByDateDesc();
         }
-        List<PostingResponseDto> response= new ArrayList<>();
-        all.forEach(i->response.add(PostingResponseDto.builder()
-                .postIdx(i.getPostingIdx())
-                .title(i.getTitle())
-                .date(i.getDate())
-                .member(i.getMember())
-                .content(i.getContent())
-                .goods(i.getGoods())
-                .fix(i.getFix())
-                .build()));
+        List<PostingResponseDto> response = getPostingResponseDtoList(all);
         return response;
     }
 
     @Transactional(readOnly = true)
     public List<PostingResponseDto> findAll(){
         List<Posting> all = postingRepository.findAll();
-        List<PostingResponseDto> response= new ArrayList<>();
-        all.forEach(i->response.add(PostingResponseDto.builder()
-                        .postIdx(i.getPostingIdx())
-                        .title(i.getTitle())
-                        .date(i.getDate())
-                        .member(i.getMember())
-                        .content(i.getContent())
-                        .goods(i.getGoods())
-                        .fix(i.getFix())
-                .build()));
+        List<PostingResponseDto> response = getPostingResponseDtoList(all);
         return response;
     }
 
     @Transactional(readOnly = true)
     public List<PostingResponseDto> findByKeyWord(String keyWord){
         List<Posting> all = postingRepository.findAllByTitleLike("%"+keyWord+"%");
-        List<PostingResponseDto> response= new ArrayList<>();
-        all.forEach(i->response.add(PostingResponseDto.builder()
-                .postIdx(i.getPostingIdx())
-                .title(i.getTitle())
-                .date(i.getDate())
-                .member(i.getMember())
-                .content(i.getContent())
-                .goods(i.getGoods())
-                .fix(i.getFix())
-                .build()));
+        List<PostingResponseDto> response = getPostingResponseDtoList(all);
         return response;
     }
 
@@ -168,5 +132,23 @@ public class PostingService {
     public void minusGoods(Long postingIdx){
         Posting postingByIdx = getPostingByIdx(postingIdx);
         postingByIdx.updateGoods(postingByIdx.getGoods()-1);
+    }
+
+    private void isTokenExpired(String accessToken) {
+        memberService.IsAccessTokenExpired(accessToken);
+    }
+
+    private List<PostingResponseDto> getPostingResponseDtoList(List<Posting> all) {
+        List<PostingResponseDto> response= new ArrayList<>();
+        all.forEach(i->response.add(PostingResponseDto.builder()
+                .postIdx(i.getPostingIdx())
+                .title(i.getTitle())
+                .date(i.getDate())
+                .member(i.getMember())
+                .content(i.getContent())
+                .goods(i.getGoods())
+                .fix(i.getFix())
+                .build()));
+        return response;
     }
 }
