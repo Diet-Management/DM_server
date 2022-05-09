@@ -34,6 +34,12 @@ public class MemberController {
         return responseService.getSingleResult(memberService.login(memberLoginDto));
     }
 
+    @PostMapping("/member/logout")
+    public CommonResultResponse logout(@RequestHeader String Authorization){
+        memberService.logout(Authorization);
+        return responseService.getSuccessResult();
+    }
+
     @GetMapping("/member/{memberIdx}")
     public SingleResultResponse<MemberResponseDto> findMember(@PathVariable Long memberIdx){
         return responseService.getSingleResult(memberService.findMemberByIdx(memberIdx));
