@@ -62,22 +62,28 @@ class PostingServiceTest {
 
     @Test
     public void findOne(){
+        //given
         PostingRequestDto postingRequestDto = new PostingRequestDto("title", "content");
         Long save = postingService.save(postingRequestDto, login.getAccessToken());
 
+        //when
         PostingResponseDto posting = postingService.getByIdx(save);
 
+        //then
         Assertions.assertThat(posting.getTitle()).isEqualTo(postingRequestDto.getTitle());
         Assertions.assertThat(posting.getContent()).isEqualTo(postingRequestDto.getContent());
     }
 
     @Test
     public void deletePosting(){
+        //given
         PostingRequestDto postingRequestDto = new PostingRequestDto("title", "content");
         Long save = postingService.save(postingRequestDto, login.getAccessToken());
 
+        //when
         postingService.deletePosting(login.getAccessToken(), save);
 
+        //then
         assertThrows(PostingNotFindException.class, ()-> postingService.getByIdx(save));
     }
 
