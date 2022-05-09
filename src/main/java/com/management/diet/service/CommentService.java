@@ -21,7 +21,7 @@ public class CommentService {
 
     @Transactional
     public Long writeComment(CommentRequestDto commentRequestDto, Long postingIdx, String accessToken){
-        memberService.IsAccessTokenExpired(accessToken);
+        isTokenExpired(accessToken);
         Member member = extracted(accessToken);
         Posting posting = postingService.getPostingByIdx(postingIdx);
         Comment comment = commentRequestDto.toEntity(member,posting);
@@ -31,7 +31,7 @@ public class CommentService {
 
     @Transactional
     public void update(CommentRequestDto commentRequestDto, Long commentIdx, String accessToken){
-        memberService.IsAccessTokenExpired(accessToken);
+        isTokenExpired(accessToken);
         Member member = extracted(accessToken);
         Comment comment = commentRepository.findById(commentIdx)
                 .orElseThrow(() -> new CommentNotFindException("Comment can't find", ErrorCode.COMMENT_NOT_FIND));
@@ -43,7 +43,7 @@ public class CommentService {
 
     @Transactional
     public void delete(String accessToken, Long commentIdx){
-        memberService.IsAccessTokenExpired(accessToken);
+        isTokenExpired(accessToken);
         Member member = extracted(accessToken);
         Comment comment = commentRepository.findById(commentIdx)
                 .orElseThrow(() -> new CommentNotFindException("Comment can't find", ErrorCode.COMMENT_NOT_FIND));
@@ -51,6 +51,10 @@ public class CommentService {
             throw new WriterNotSameException("Writer isn't same", ErrorCode.WRITER_NOT_SAME);
         }
         commentRepository.delete(comment);
+    }
+
+    private void isTokenExpired(String accessToken) {
+        memberService.IsAccessTokenExpired(accessToken);
     }
 
     private Member extracted(String accessToken) {
