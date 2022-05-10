@@ -35,6 +35,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             if(tokenProvider.isTokenExpired(accessToken) && refreshToken != null){
                 String newAccessToken = generateNewAccessToken(refreshToken);
                 response.addHeader("JwtToken", newAccessToken);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         }
         filterChain.doFilter(request, response);
