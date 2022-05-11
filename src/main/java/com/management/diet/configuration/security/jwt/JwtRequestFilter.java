@@ -7,7 +7,6 @@ import lombok.SneakyThrows;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.SignatureException;
 
 @Component
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if(accessToken!=null){
             String userEmail=accessTokenExtractEmail(accessToken);
             if(userEmail!=null) registerUserinfoInSecurityContext(userEmail, request);
-            if(tokenProvider.isTokenExpired(accessToken) && refreshToken != null){
+            if(tokenProvider.isTokenExpired(accessToken) && refreshToken != null && tokenProvider.getTokenType(refreshToken).equals("refreshToken")){
                 String newAccessToken = generateNewAccessToken(refreshToken);
                 response.addHeader("JwtToken", newAccessToken);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
