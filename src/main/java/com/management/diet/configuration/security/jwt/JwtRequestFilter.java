@@ -33,8 +33,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken=request.getHeader("Authorization");
         String refreshToken=request.getHeader("RefreshToken");
-        if(accessToken!=null){
-            if(tokenProvider.isTokenExpired(accessToken) && refreshToken != null && tokenProvider.getTokenType(refreshToken).equals("refreshToken")){
+        if(accessToken!=null && refreshToken != null){
+            if(tokenProvider.isTokenExpired(accessToken) && tokenProvider.getTokenType(refreshToken).equals("refreshToken") && !tokenProvider.isTokenExpired(refreshToken)){
                 accessToken = generateNewAccessToken(refreshToken);
                 String bodyToJson = getBodyToJson();
                 response.addHeader("accessToken", accessToken);
