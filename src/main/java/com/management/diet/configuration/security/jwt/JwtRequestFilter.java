@@ -1,5 +1,7 @@
 package com.management.diet.configuration.security.jwt;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.management.diet.configuration.security.auth.MyUserDetailsService;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
@@ -16,28 +18,46 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
     private final MyUserDetailsService memberService;
+    private final ObjectMapper objectMapper;
+
     @SneakyThrows
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken=request.getHeader("Authorization");
         String refreshToken=request.getHeader("RefreshToken");
         if(accessToken!=null){
+            if(tokenProvider.isTokenExpired(accessToken) && refreshToken != null && tokenProvider.getTokenType(refreshToken).equals("refreshToken")){
+                accessToken = generateNewAccessToken(refreshToken);
+                String bodyToJson = getBodyToJson();
+                response.addHeader("accessToken", accessToken);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write(bodyToJson);
+                return;
+            }
             String userEmail=accessTokenExtractEmail(accessToken);
             if(userEmail!=null) registerUserinfoInSecurityContext(userEmail, request);
-            if(tokenProvider.isTokenExpired(accessToken) && refreshToken != null && tokenProvider.getTokenType(refreshToken).equals("refreshToken")){
-                String newAccessToken = generateNewAccessToken(refreshToken);
-                response.addHeader("JwtToken", newAccessToken);
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            }
         }
         filterChain.doFilter(request, response);
     }
+
+    private String getBodyToJson() throws JsonProcessingException {
+        Map<String,Object> body = new HashMap<>();
+        body.put("success", true);
+        body.put("msg", "Token is regenerated");
+        body.put("status", 401);
+        String bodyToJson = objectMapper.writeValueAsString(body);
+        return bodyToJson;
+    }
+
     private String accessTokenExtractEmail(String accessToken){
         try{
             return tokenProvider.getUserEmail(accessToken);

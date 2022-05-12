@@ -29,7 +29,7 @@ public class TokenProvider {
     @AllArgsConstructor
     enum TokenClaimName{
         USER_EMAIL("userEmail"),
-        TOKEN_TYPE("token_type");
+        TOKEN_TYPE("tokenType");
         String value;
     }
     private Key getSigningKey(String secretKey){
