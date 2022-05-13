@@ -6,6 +6,7 @@ import com.management.diet.configuration.security.auth.MyUserDetailsService;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,7 +54,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         Map<String,Object> body = new HashMap<>();
         body.put("success", true);
         body.put("msg", "Token is regenerated");
-        body.put("status", 401);
+        body.put("status", HttpStatus.UNAUTHORIZED.value());
         String bodyToJson = objectMapper.writeValueAsString(body);
         return bodyToJson;
     }
