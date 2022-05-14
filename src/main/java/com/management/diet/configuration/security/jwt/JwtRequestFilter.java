@@ -37,17 +37,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if(accessToken!=null && refreshToken != null){
             if(tokenProvider.isTokenExpired(accessToken) && tokenProvider.getTokenType(refreshToken).equals("refreshToken") && !tokenProvider.isTokenExpired(refreshToken)){
                 accessToken = generateNewAccessToken(refreshToken);
-                String bodyToJson = getBodyToJson();
-                response.addHeader("accessToken", accessToken);
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json");
-                response.getWriter().write(bodyToJson);
+                writeResponse(response, accessToken);
                 return;
             }
             String userEmail=accessTokenExtractEmail(accessToken);
             if(userEmail!=null) registerUserinfoInSecurityContext(userEmail, request);
         }
         filterChain.doFilter(request, response);
+    }
+
+    private void writeResponse(HttpServletResponse response, String accessToken) throws IOException {
+        String bodyToJson = getBodyToJson();
+        response.addHeader("accessToken", accessToken);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write(bodyToJson);
     }
 
     private String getBodyToJson() throws JsonProcessingException {
