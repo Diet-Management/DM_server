@@ -9,6 +9,7 @@ import com.management.diet.dto.response.MemberResponseDto;
 import com.management.diet.exception.ErrorCode;
 import com.management.diet.exception.exception.*;
 import com.management.diet.repository.MemberRepository;
+import com.management.diet.util.CurrentMemberUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final CurrentMemberUtil memberUtil;
     @Value("${file.upload.location}")
     private String fileDir;
 
@@ -143,6 +145,10 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFindException("Member can't find", ErrorCode.MEMBER_NOT_FIND));
         return member;
+    }
+
+    public Member getCurrentMember(){
+        return memberUtil.getCurrentMember();
     }
 
     public MemberLoginResponseDto generateNewAccessToken(String refreshToken){

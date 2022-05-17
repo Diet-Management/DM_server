@@ -47,7 +47,7 @@ class CommentServiceTest {
         login = memberService.login(memberLoginDto);
 
         PostingRequestDto postingRequestDto = new PostingRequestDto("title", "content");
-        postingIdx = postingService.save(postingRequestDto, login.getAccessToken());
+        postingIdx = postingService.save(postingRequestDto);
     }
 
     @AfterEach

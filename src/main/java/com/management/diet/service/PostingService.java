@@ -9,6 +9,7 @@ import com.management.diet.exception.ErrorCode;
 import com.management.diet.exception.exception.PostingNotFindException;
 import com.management.diet.exception.exception.WriterNotSameException;
 import com.management.diet.repository.PostingRepository;
+import com.management.diet.util.CurrentMemberUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +25,8 @@ public class PostingService {
     private final MemberService memberService;
 
     @Transactional
-    public Long save(PostingRequestDto postingRequestDto, String accessToken){
-        String userEmail = memberService.getUserEmail(accessToken);
-        Member member = memberService.findMemberByEmail(userEmail);
+    public Long save(PostingRequestDto postingRequestDto){
+        Member member = memberService.getCurrentMember();
         Posting posting = postingRequestDto.toEntity(member, LocalDate.now());
         member.getPostings().add(posting);
         postingRepository.save(posting);
@@ -34,9 +34,8 @@ public class PostingService {
     }
 
     @Transactional
-    public void deletePosting(String accessToken, Long postingIdx){
-        String userEmail = memberService.getUserEmail(accessToken);
-        Member member = memberService.findMemberByEmail(userEmail);
+    public void deletePosting(Long postingIdx){
+        Member member = memberService.getCurrentMember();
         Posting posting = getPostingByIdx(postingIdx);
         Member writer = posting.getMember();
         if(member != writer){
@@ -46,9 +45,8 @@ public class PostingService {
     }
 
     @Transactional
-    public void updatePosting(String accessToken, Long postingIdx, PostingRequestDto postingRequestDto){
-        String userEmail = memberService.getUserEmail(accessToken);
-        Member member = memberService.findMemberByEmail(userEmail);
+    public void updatePosting(Long postingIdx, PostingRequestDto postingRequestDto){
+        Member member = memberService.getCurrentMember();
         Posting posting = getPostingByIdx(postingIdx);
         Member writer = posting.getMember();
         if(member != writer){

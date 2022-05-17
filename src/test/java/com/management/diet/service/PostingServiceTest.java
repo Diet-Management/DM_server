@@ -1,6 +1,6 @@
 package com.management.diet.service;
 
-import com.management.diet.dto.request.MemberLoginDto;
+import com.management.diet.configuration.security.auth.MyUserDetailsService;
 import com.management.diet.dto.request.MemberRequestDto;
 import com.management.diet.dto.request.PostingRequestDto;
 import com.management.diet.dto.response.MemberLoginResponseDto;
@@ -15,6 +15,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -34,13 +37,16 @@ class PostingServiceTest {
     private PostingRepository postingRepository;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private MyUserDetailsService myUserDetailsService;
 
     @BeforeEach
     public void createMember(){
         MemberRequestDto memberRequestDto = new MemberRequestDto("test@gmail.com", "test", "1234", Theme.BLACK);
         memberService.join(memberRequestDto);
-        MemberLoginDto memberLoginDto = new MemberLoginDto("test@gmail.com", "1234");
-        login = memberService.login(memberLoginDto);
+        UserDetails userDetails = myUserDetailsService.loadUserByUsername(memberRequestDto.getEmail());
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
     }
     @AfterEach
     public void init(){
@@ -54,7 +60,7 @@ class PostingServiceTest {
         PostingRequestDto postingRequestDto = new PostingRequestDto("title", "content");
 
         //when
-        Long save = postingService.save(postingRequestDto, login.getAccessToken());
+        Long save = postingService.save(postingRequestDto);
 
         //then
         Assertions.assertThat(postingRequestDto.getTitle()).isEqualTo(postingService.getPostingByIdx(save).getTitle());
@@ -64,7 +70,7 @@ class PostingServiceTest {
     public void findOne(){
         //given
         PostingRequestDto postingRequestDto = new PostingRequestDto("title", "content");
-        Long save = postingService.save(postingRequestDto, login.getAccessToken());
+        Long save = postingService.save(postingRequestDto);
 
         //when
         PostingResponseDto posting = postingService.getByIdx(save);
@@ -78,10 +84,10 @@ class PostingServiceTest {
     public void deletePosting(){
         //given
         PostingRequestDto postingRequestDto = new PostingRequestDto("title", "content");
-        Long save = postingService.save(postingRequestDto, login.getAccessToken());
+        Long save = postingService.save(postingRequestDto);
 
         //when
-        postingService.deletePosting(login.getAccessToken(), save);
+        postingService.deletePosting(save);
 
         //then
         assertThrows(PostingNotFindException.class, ()-> postingService.getByIdx(save));
@@ -92,8 +98,8 @@ class PostingServiceTest {
         //given
         PostingRequestDto postingRequestDto = new PostingRequestDto("title", "content");
         PostingRequestDto postingRequestDto2 = new PostingRequestDto("test", "몰?루");
-        postingService.save(postingRequestDto, login.getAccessToken());
-        postingService.save(postingRequestDto2, login.getAccessToken());
+        postingService.save(postingRequestDto);
+        postingService.save(postingRequestDto2);
 
         //when
         List<PostingResponseDto> all = postingService.findAll();

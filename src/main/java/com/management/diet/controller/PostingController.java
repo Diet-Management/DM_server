@@ -19,8 +19,8 @@ public class PostingController {
     private final ResponseService responseService;
 
     @PostMapping("/posting")
-    public CommonResultResponse savePosting(@RequestBody PostingRequestDto postingRequestDto, @RequestHeader String Authorization){
-        postingService.save(postingRequestDto, Authorization);
+    public CommonResultResponse savePosting(@RequestBody PostingRequestDto postingRequestDto){
+        postingService.save(postingRequestDto);
         return responseService.getSuccessResult();
     }
 
@@ -60,14 +60,14 @@ public class PostingController {
     }
 
     @DeleteMapping("/posting/{postingIdx}")
-    public CommonResultResponse deletePosting(@RequestHeader String Authorization, @PathVariable Long postingIdx){
-        postingService.deletePosting(Authorization, postingIdx);
+    public CommonResultResponse deletePosting(@PathVariable Long postingIdx){
+        postingService.deletePosting(postingIdx);
         return responseService.getSuccessResult();
     }
 
     @PutMapping("/posting/{postingIdx}")
-    public CommonResultResponse updatePosting(@RequestHeader String Authorization, @PathVariable Long postingIdx, @RequestBody PostingRequestDto postingRequestDto){
-        postingService.updatePosting(Authorization, postingIdx, postingRequestDto);
+    public CommonResultResponse updatePosting(@PathVariable Long postingIdx, @RequestBody PostingRequestDto postingRequestDto){
+        postingService.updatePosting(postingIdx, postingRequestDto);
         return responseService.getSuccessResult();
     }
 
