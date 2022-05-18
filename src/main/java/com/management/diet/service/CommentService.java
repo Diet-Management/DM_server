@@ -20,9 +20,8 @@ public class CommentService {
     private final PostingService postingService;
 
     @Transactional
-    public Long writeComment(CommentRequestDto commentRequestDto, Long postingIdx, String accessToken){
-        isTokenExpired(accessToken);
-        Member member = extracted(accessToken);
+    public Long writeComment(CommentRequestDto commentRequestDto, Long postingIdx){
+        Member member = memberService.getCurrentMember();
         Posting posting = postingService.getPostingByIdx(postingIdx);
         Comment comment = commentRequestDto.toEntity(member,posting);
         posting.getComments().add(comment);
@@ -30,9 +29,8 @@ public class CommentService {
     }
 
     @Transactional
-    public void update(CommentRequestDto commentRequestDto, Long commentIdx, String accessToken){
-        isTokenExpired(accessToken);
-        Member member = extracted(accessToken);
+    public void update(CommentRequestDto commentRequestDto, Long commentIdx){
+        Member member = memberService.getCurrentMember();
         Comment comment = commentRepository.findById(commentIdx)
                 .orElseThrow(() -> new CommentNotFindException("Comment can't find", ErrorCode.COMMENT_NOT_FIND));
         if(comment.getWriter() != member){
@@ -42,23 +40,13 @@ public class CommentService {
     }
 
     @Transactional
-    public void delete(String accessToken, Long commentIdx){
-        isTokenExpired(accessToken);
-        Member member = extracted(accessToken);
+    public void delete(Long commentIdx){
+        Member member = memberService.getCurrentMember();
         Comment comment = commentRepository.findById(commentIdx)
                 .orElseThrow(() -> new CommentNotFindException("Comment can't find", ErrorCode.COMMENT_NOT_FIND));
         if(member != comment.getWriter()){
             throw new WriterNotSameException("Writer isn't same", ErrorCode.WRITER_NOT_SAME);
         }
         commentRepository.delete(comment);
-    }
-
-    private void isTokenExpired(String accessToken) {
-        memberService.IsAccessTokenExpired(accessToken);
-    }
-
-    private Member extracted(String accessToken) {
-        String userEmail = memberService.getUserEmail(accessToken);
-        return memberService.findMemberByEmail(userEmail);
     }
 }

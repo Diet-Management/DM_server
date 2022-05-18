@@ -16,20 +16,20 @@ public class CommentController {
     private final ResponseService responseService;
 
     @PostMapping("/comment/{postingIdx}")
-    public CommonResultResponse commentSave(@RequestBody CommentRequestDto commentRequestDto, @RequestHeader String Authorization, @PathVariable Long postingIdx){
-        commentService.writeComment(commentRequestDto, postingIdx, Authorization);
+    public CommonResultResponse commentSave(@RequestBody CommentRequestDto commentRequestDto, @PathVariable Long postingIdx){
+        commentService.writeComment(commentRequestDto, postingIdx);
         return responseService.getSuccessResult();
     }
 
     @PutMapping("/comment/{commentIdx}")
-    public CommonResultResponse commentUpdate(@RequestBody CommentRequestDto commentRequestDto, @RequestHeader String Authorization, @PathVariable Long commentIdx){
-        commentService.update(commentRequestDto, commentIdx, Authorization);
+    public CommonResultResponse commentUpdate(@RequestBody CommentRequestDto commentRequestDto, @PathVariable Long commentIdx){
+        commentService.update(commentRequestDto, commentIdx);
         return responseService.getSuccessResult();
     }
 
     @DeleteMapping("/comment/{commentIdx}")
-    public CommonResultResponse commentDelete(@RequestHeader String Authorization, @PathVariable Long commentIdx){
-        commentService.delete(Authorization, commentIdx);
+    public CommonResultResponse commentDelete(@PathVariable Long commentIdx){
+        commentService.delete(commentIdx);
         return responseService.getSuccessResult();
     }
 }
