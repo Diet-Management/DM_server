@@ -1,5 +1,6 @@
 package com.management.diet.service;
 
+import com.management.diet.configuration.security.auth.MyUserDetailsService;
 import com.management.diet.configuration.security.jwt.TokenProvider;
 import com.management.diet.dto.request.MemberLoginDto;
 import com.management.diet.dto.request.MemberRequestDto;
@@ -14,6 +15,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,6 +31,8 @@ class MemberServiceTest {
     private MemberRepository memberRepository;
     @Autowired
     private TokenProvider tokenProvider;
+    @Autowired
+    private MyUserDetailsService myUserDetailsService;
 
     @AfterEach
     public void init(){
@@ -79,11 +85,12 @@ class MemberServiceTest {
         //given
         MemberRequestDto memberRequestDto = new MemberRequestDto("test@gmail.com", "test", "1234", Theme.BLACK);
         memberService.join(memberRequestDto);
-        MemberLoginDto memberLoginDto = new MemberLoginDto("test@gmail.com", "1234");
-        MemberLoginResponseDto login = memberService.login(memberLoginDto);
+        UserDetails userDetails = myUserDetailsService.loadUserByUsername(memberRequestDto.getEmail());
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
         //when
-        memberService.logout(login.getAccessToken());
+        memberService.logout();
 
         //then
         Assertions.assertThat(memberService.findMemberByEmail("test@gmail.com").getRefreshToken()).isEqualTo(null);
@@ -94,15 +101,15 @@ class MemberServiceTest {
         //given
         MemberRequestDto memberRequestDto = new MemberRequestDto("test@gmail.com", "test", "1234", Theme.BLACK);
         memberService.join(memberRequestDto);
-        MemberLoginDto loginDto = new MemberLoginDto("test@gmail.com", "1234");
-        MemberLoginResponseDto login = memberService.login(loginDto);
-        String accessToken = login.getAccessToken();
+        UserDetails userDetails = myUserDetailsService.loadUserByUsername(memberRequestDto.getEmail());
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
         //when
-        memberService.withdrawalMember(accessToken);
+        memberService.withdrawalMember();
 
         //then
-        assertThrows(MemberNotFindException.class, () -> memberService.findMemberByEmail(tokenProvider.getUserEmail(accessToken)));
+        assertThrows(MemberNotFindException.class, () -> memberService.findMemberByEmail(memberRequestDto.getEmail()));
     }
 
     @Test
