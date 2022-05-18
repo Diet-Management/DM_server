@@ -1,5 +1,6 @@
 package com.management.diet.service;
 
+import com.management.diet.configuration.security.auth.MyUserDetailsService;
 import com.management.diet.domain.Comment;
 import com.management.diet.dto.request.CommentRequestDto;
 import com.management.diet.dto.request.MemberLoginDto;
@@ -16,6 +17,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -35,6 +39,8 @@ class CommentServiceTest {
     private MemberRepository memberRepository;
     @Autowired
     private PostingRepository postingRepository;
+    @Autowired
+    private MyUserDetailsService myUserDetailsService;
 
     private MemberLoginResponseDto login;
     private Long postingIdx;
@@ -43,8 +49,9 @@ class CommentServiceTest {
     public void initialSetting(){
         MemberRequestDto memberRequestDto = new MemberRequestDto("test@gmail.com", "test", "1234", Theme.BLACK);
         memberService.join(memberRequestDto);
-        MemberLoginDto memberLoginDto = new MemberLoginDto("test@gmail.com", "1234");
-        login = memberService.login(memberLoginDto);
+        UserDetails userDetails = myUserDetailsService.loadUserByUsername(memberRequestDto.getEmail());
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
         PostingRequestDto postingRequestDto = new PostingRequestDto("title", "content");
         postingIdx = postingService.save(postingRequestDto);
@@ -62,7 +69,7 @@ class CommentServiceTest {
         CommentRequestDto commentRequestDto = new CommentRequestDto("test");
 
         //when
-        commentService.writeComment(commentRequestDto,postingIdx, login.getAccessToken());
+        commentService.writeComment(commentRequestDto,postingIdx);
 
         //then
         PostingResponseDto posting = postingService.getByIdx(postingIdx);
@@ -74,10 +81,10 @@ class CommentServiceTest {
     public void delete(){
         //given
         CommentRequestDto commentRequestDto = new CommentRequestDto("test");
-        Long commentIdx = commentService.writeComment(commentRequestDto, postingIdx, login.getAccessToken());
+        Long commentIdx = commentService.writeComment(commentRequestDto, postingIdx);
 
         //when
-        commentService.delete(login.getAccessToken(), commentIdx);
+        commentService.delete(commentIdx);
 
         //then
         List<Comment> comments = postingService.getPostingByIdx(postingIdx).getComments();
@@ -89,12 +96,12 @@ class CommentServiceTest {
     public void update(){
         //given
         CommentRequestDto commentRequestDto = new CommentRequestDto("test");
-        Long commentIdx = commentService.writeComment(commentRequestDto, postingIdx, login.getAccessToken());
+        Long commentIdx = commentService.writeComment(commentRequestDto, postingIdx);
         Assertions.assertThat(postingService.getPostingByIdx(postingIdx).getComments().get(0).getContent()).isEqualTo(commentRequestDto.getContent());
 
         //when
         CommentRequestDto commentRequestDto2 = new CommentRequestDto("content");
-        commentService.update(commentRequestDto2, commentIdx, login.getAccessToken());
+        commentService.update(commentRequestDto2, commentIdx);
 
         //then
         Assertions.assertThat(postingService.getPostingByIdx(postingIdx).getComments().get(0).getContent()).isEqualTo(commentRequestDto2.getContent());
