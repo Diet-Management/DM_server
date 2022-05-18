@@ -35,8 +35,8 @@ public class MemberController {
     }
 
     @PostMapping("/member/logout")
-    public CommonResultResponse logout(@RequestHeader String Authorization){
-        memberService.logout(Authorization);
+    public CommonResultResponse logout(){
+        memberService.logout();
         return responseService.getSuccessResult();
     }
 
@@ -46,24 +46,19 @@ public class MemberController {
     }
 
     @DeleteMapping("/member")
-    public CommonResultResponse deleteMember(@RequestHeader String Authorization){
-        memberService.withdrawalMember(Authorization);
+    public CommonResultResponse deleteMember(){
+        memberService.withdrawalMember();
         return responseService.getSuccessResult();
     }
 
     @PatchMapping("/member/profile")
-    public CommonResultResponse updateProfile(@RequestParam MultipartFile file, @RequestHeader String Authorization){
-        memberService.uploadProfile(file, Authorization);
+    public CommonResultResponse updateProfile(@RequestParam MultipartFile file){
+        memberService.uploadProfile(file);
         return responseService.getSuccessResult();
     }
 
     @GetMapping("/member/profile/{memberIdx}")
     public ResponseEntity<Resource> viewImg(@PathVariable Long memberIdx) throws IOException{
         return memberService.getProfile(memberIdx);
-    }
-
-    @GetMapping("/member/token")
-    public SingleResultResponse<MemberLoginResponseDto> newToken(@RequestHeader String refreshToken){
-        return responseService.getSingleResult(memberService.generateNewAccessToken(refreshToken));
     }
 }

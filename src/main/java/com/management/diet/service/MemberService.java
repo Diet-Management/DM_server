@@ -70,18 +70,14 @@ public class MemberService {
     }
 
     @Transactional
-    public void logout(String accessToken){
-        String userEmail = getUserEmail(accessToken);
-        Member memberByEmail = findMemberByEmail(userEmail);
-        memberByEmail.updateRefreshToken(null);
+    public void logout(){
+        Member currentMember = getCurrentMember();
+        currentMember.updateRefreshToken(null);
     }
 
     @Transactional
-    public void withdrawalMember(String accessToken){
-        IsAccessTokenExpired(accessToken);
-        String userEmail = getUserEmail(accessToken);
-        Member member = memberRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new MemberNotFindException("Member can't find to accessToken", ErrorCode.MEMBER_NOT_FIND));
+    public void withdrawalMember(){
+        Member member = getCurrentMember();
         memberRepository.delete(member);
     }
 
@@ -95,8 +91,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void uploadProfile(MultipartFile file, String accessToken){
-        IsAccessTokenExpired(accessToken);
+    public void uploadProfile(MultipartFile file){
         log.info(" fileDir = {}",fileDir);
         if(file.isEmpty()){
             throw new FileNotExistsException("File doesn't exist", ErrorCode.FILE_NOT_EXISTS);
@@ -108,8 +103,7 @@ public class MemberService {
         }catch (IOException e){
             throw new WrongPathException("Path isn't right",ErrorCode.WRONG_PATH);
         }
-        Member member = memberRepository.findByEmail(getUserEmail(accessToken))
-                .orElseThrow(() -> new MemberNotFindException("Member can't find to accessToken", ErrorCode.MEMBER_NOT_FIND));
+        Member member = getCurrentMember();
         member.updateProfile(fullPath);
     }
 
@@ -151,15 +145,4 @@ public class MemberService {
         return memberUtil.getCurrentMember();
     }
 
-    public MemberLoginResponseDto generateNewAccessToken(String refreshToken){
-        if(tokenProvider.isTokenExpired(refreshToken)){
-            throw new RefreshTokenExpiredException("RefreshToken is expired", ErrorCode.REFRESH_TOKEN_EXPIRED);
-        }
-        String userEmail = getUserEmail(refreshToken);
-        String accessToken = tokenProvider.generateAccessToken(userEmail);
-        return MemberLoginResponseDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
 }
