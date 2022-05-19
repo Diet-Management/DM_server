@@ -9,7 +9,7 @@ import lombok.Setter;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-@Setter @Getter
+@Getter
 @AllArgsConstructor
 public class MemberRequestDto {
     @NotBlank(message = "email is not allowed null") @Email
@@ -23,7 +23,7 @@ public class MemberRequestDto {
 
     private Theme theme;
 
-    public Member toEntity(){
+    public Member toEntity(String password){
         return Member.builder()
                 .email(email)
                 .name(name)

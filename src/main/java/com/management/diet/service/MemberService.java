@@ -46,8 +46,7 @@ public class MemberService {
         if(!byEmail.isEmpty()){
             throw new DuplicateMemberException("Member is duplicate", ErrorCode.DUPLICATE_MEMBER);
         }
-        memberRequestDto.setPassword(passwordEncoder.encode(memberRequestDto.getPassword()));
-        Member member = memberRequestDto.toEntity();
+        Member member = memberRequestDto.toEntity(passwordEncoder.encode(memberRequestDto.getPassword()));
         return memberRepository.save(member).getMember_idx();
     }
 
