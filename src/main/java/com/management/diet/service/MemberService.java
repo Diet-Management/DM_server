@@ -81,15 +81,6 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
-    protected String getUserEmail(String accessToken){
-        return tokenProvider.getUserEmail(accessToken);
-    }
-    protected void IsAccessTokenExpired(String accessToken) {
-        if(tokenProvider.isTokenExpired(accessToken)){
-            throw new AccessTokenExpiredException("AccessToken is expired", ErrorCode.ACCESS_TOKEN_EXPIRED);
-        }
-    }
-
     @Transactional
     public void uploadProfile(MultipartFile file){
         log.info(" fileDir = {}",fileDir);
