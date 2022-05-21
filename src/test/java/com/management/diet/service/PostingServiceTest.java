@@ -27,8 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("dev")
 @SpringBootTest
 class PostingServiceTest {
-    private MemberLoginResponseDto login;
-
     @Autowired
     private PostingService postingService;
     @Autowired

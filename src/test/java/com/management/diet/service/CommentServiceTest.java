@@ -42,7 +42,6 @@ class CommentServiceTest {
     @Autowired
     private MyUserDetailsService myUserDetailsService;
 
-    private MemberLoginResponseDto login;
     private Long postingIdx;
 
     @BeforeEach
