@@ -66,7 +66,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private String accessTokenExtractEmail(String accessToken){
         try{
             return tokenProvider.getUserEmail(accessToken);
-        }catch(JwtException | IllegalArgumentException e){
+        }catch(JwtException e){
             throw new RuntimeException();
         }
     }
