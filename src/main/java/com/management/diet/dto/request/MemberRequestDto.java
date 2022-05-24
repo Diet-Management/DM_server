@@ -4,7 +4,6 @@ import com.management.diet.domain.Member;
 import com.management.diet.enums.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
