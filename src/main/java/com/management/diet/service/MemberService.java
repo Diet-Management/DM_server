@@ -10,6 +10,7 @@ import com.management.diet.exception.ErrorCode;
 import com.management.diet.exception.exception.*;
 import com.management.diet.repository.MemberRepository;
 import com.management.diet.util.CurrentMemberUtil;
+import com.management.diet.util.ResponseDtoUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +38,7 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final CurrentMemberUtil memberUtil;
+    private final ResponseDtoUtil responseDtoUtil;
     @Value("${file.upload.location}")
     private String fileDir;
 
@@ -114,13 +116,7 @@ public class MemberService {
     public MemberResponseDto findMemberByIdx(Long memberIdx){
         Member member = memberRepository.findById(memberIdx)
                 .orElseThrow(() -> new MemberNotFindException("Member can't find", ErrorCode.MEMBER_NOT_FIND));
-        MemberResponseDto memberResponseDto = MemberResponseDto.builder()
-                .memberIdx(memberIdx)
-                .name(member.getName())
-                .profile(member.getProfile())
-                .postings(member.getPostings())
-                .theme(member.getTheme())
-                .build();
+        MemberResponseDto memberResponseDto = (MemberResponseDto) responseDtoUtil.oneToResponse(new MemberResponseDto(), member);
         return memberResponseDto;
     }
 

@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Builder
 @Getter
-@AllArgsConstructor @NoArgsConstructor
-public class MemberLoginResponseDto {
+@NoArgsConstructor
+@AllArgsConstructor
+public class MemberLoginResponseDto implements ResponseDto{
     private Long memberIdx;
     private String accessToken;
     private String refreshToken;

@@ -10,6 +10,7 @@ import com.management.diet.exception.exception.PostingNotFindException;
 import com.management.diet.exception.exception.WriterNotSameException;
 import com.management.diet.repository.PostingRepository;
 import com.management.diet.util.CurrentMemberUtil;
+import com.management.diet.util.ResponseDtoUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import java.util.List;
 public class PostingService {
     private final PostingRepository postingRepository;
     private final MemberService memberService;
+    private final ResponseDtoUtil responseDtoUtil;
 
     @Transactional
     public Long save(PostingRequestDto postingRequestDto){
@@ -65,16 +67,7 @@ public class PostingService {
     public PostingResponseDto getByIdx(Long postingIdx){
         Posting posting = postingRepository.findById(postingIdx)
                 .orElseThrow(() -> new PostingNotFindException("Posting can't find", ErrorCode.POSTING_NOT_FIND));
-        return PostingResponseDto.builder()
-                .postIdx(posting.getPostingIdx())
-                .title(posting.getTitle())
-                .content(posting.getContent())
-                .fix(posting.getFix())
-                .member(posting.getMember())
-                .date(posting.getDate())
-                .goods(posting.getGoods())
-                .comments(posting.getComments())
-                .build();
+        return (PostingResponseDto) responseDtoUtil.oneToResponse(new PostingResponseDto(), posting);
     }
 
     @Transactional(readOnly = true)
