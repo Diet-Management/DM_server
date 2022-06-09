@@ -2,20 +2,15 @@ package com.management.diet.dto.response;
 
 import com.management.diet.domain.Comment;
 import com.management.diet.domain.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class PostingResponseDto implements ResponseDto{
-    private Long postIdx;
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED) @AllArgsConstructor
+public class PostingResponseDto {
+    private Long postingIdx;
     private String title;
     private String content;
     private LocalDate date;

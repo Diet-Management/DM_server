@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberLoginResponseDto implements ResponseDto{
+public class MemberLoginResponseDto {
     private Long memberIdx;
     private String accessToken;
     private String refreshToken;

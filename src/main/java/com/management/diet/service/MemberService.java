@@ -116,8 +116,7 @@ public class MemberService {
     public MemberResponseDto findMemberByIdx(Long memberIdx){
         Member member = memberRepository.findById(memberIdx)
                 .orElseThrow(() -> new MemberNotFindException("Member can't find", ErrorCode.MEMBER_NOT_FIND));
-        MemberResponseDto memberResponseDto = (MemberResponseDto) responseDtoUtil.oneToResponse(new MemberResponseDto(), member);
-        return memberResponseDto;
+        return ResponseDtoUtil.mapping(member, MemberResponseDto.class);
     }
 
     @Transactional(readOnly = true)

@@ -9,14 +9,12 @@ import com.management.diet.exception.ErrorCode;
 import com.management.diet.exception.exception.PostingNotFindException;
 import com.management.diet.exception.exception.WriterNotSameException;
 import com.management.diet.repository.PostingRepository;
-import com.management.diet.util.CurrentMemberUtil;
 import com.management.diet.util.ResponseDtoUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,7 +22,6 @@ import java.util.List;
 public class PostingService {
     private final PostingRepository postingRepository;
     private final MemberService memberService;
-    private final ResponseDtoUtil responseDtoUtil;
 
     @Transactional
     public Long save(PostingRequestDto postingRequestDto){
@@ -67,7 +64,7 @@ public class PostingService {
     public PostingResponseDto getByIdx(Long postingIdx){
         Posting posting = postingRepository.findById(postingIdx)
                 .orElseThrow(() -> new PostingNotFindException("Posting can't find", ErrorCode.POSTING_NOT_FIND));
-        return (PostingResponseDto) responseDtoUtil.oneToResponse(new PostingResponseDto(), posting);
+        return ResponseDtoUtil.mapping(posting, PostingResponseDto.class);
     }
 
     @Transactional(readOnly = true)
@@ -123,16 +120,6 @@ public class PostingService {
     }
 
     private List<PostingResponseDto> getPostingResponseDtoList(List<Posting> all) {
-        List<PostingResponseDto> response= new ArrayList<>();
-        all.forEach(i->response.add(PostingResponseDto.builder()
-                .postIdx(i.getPostingIdx())
-                .title(i.getTitle())
-                .date(i.getDate())
-                .member(i.getMember())
-                .content(i.getContent())
-                .goods(i.getGoods())
-                .fix(i.getFix())
-                .build()));
-        return response;
+        return ResponseDtoUtil.mapAll(all, PostingResponseDto.class);
     }
 }
