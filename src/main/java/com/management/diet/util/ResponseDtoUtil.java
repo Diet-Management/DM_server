@@ -1,5 +1,7 @@
 package com.management.diet.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Component;
@@ -9,6 +11,7 @@ import java.util.stream.Collectors;
 
 
 @Component
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ResponseDtoUtil {
     private static ModelMapper mapper = new ModelMapper();
 
@@ -17,7 +20,7 @@ public class ResponseDtoUtil {
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-    public static <D,T> D mapping(T entity, Class<D> dto){
+    public static <D,T> D mapping(final T entity, Class<D> dto){
         return mapper.map(entity, dto);
     }
 
