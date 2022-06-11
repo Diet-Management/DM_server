@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Component
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ResponseDtoUtil {
-    private static ModelMapper mapper = new ModelMapper();
+    private static ModelMapper mapper;
 
     static {
         mapper = new ModelMapper();
